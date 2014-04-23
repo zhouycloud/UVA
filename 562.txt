@@ -1,0 +1,60 @@
+//赋初值的时候要注意下
+#include <list>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <map>
+#include <stack>
+#include <cmath>
+#include <algorithm>
+#include <queue>
+#define MAXN 1000000
+#define MAXO 50005
+#define Min -1000000
+#define INF 1e9
+using namespace std;
+int d[MAXN],n;
+int c[105],coin_num;
+int money;
+
+int dp(int y)
+{
+	int i,j;
+	for (i=1;i<=coin_num;i++)
+	{
+		for (j=y;j>=c[i];j--)
+		{
+			if(d[j]<d[j-c[i]]+c[i])
+				d[j]=d[j-c[i]]+c[i];
+		}
+	}
+	return d[y];
+}
+
+
+
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,t_count=0,t_num,p,q;
+	freopen("input.txt","r",stdin);
+	scanf("%d",&t_count);
+	while (t_count--)
+	{
+		memset(d,0,sizeof(d));
+		int sum=0;
+		scanf("%d",&coin_num);
+		for (i=1;i<=coin_num;i++)
+		{
+			scanf("%d",&c[i]);
+			sum+=c[i];
+		}
+		int half=sum/2;
+		dp(half);
+		printf("%d\n",sum-d[half]*2);
+	}
+	
+
+	return 0;
+}

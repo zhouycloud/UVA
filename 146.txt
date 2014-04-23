@@ -1,0 +1,61 @@
+//该道题的算法描述如下：
+1. 找到原串的最长不升后缀。
+2. 判断，如找到的后缀即为原串，则无所求后缀。
+3. 从后往前找到第一个大于[后缀前一个字符]的字符，并交换这两个字符。
+4. 将处理后的后缀按升序排序即得。
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <cmath>
+#include <algorithm>
+#define MAXN 100000
+#define INF 999999
+#define PLUS_CONSTANT 500
+using namespace std;
+char str[100];
+int permutation_num;
+char str_permutation[MAXN][100],str_set[100];
+
+int cmp(const void *a,const void *b)
+{
+	return *(char*)a-*(char*)b;
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,t_count;
+	freopen("input.txt","r",stdin);
+	while (scanf("%s",str)!=EOF&&strcmp(str,"#")!=0)
+	{
+		int len=strlen(str);
+		char last=str[len-1];
+		for(i=len-1;i>0;i--)
+		{
+			if(str[i]>str[i-1])
+				break;
+		}
+		if(i==0)
+			printf("No Successor\n");
+		else
+		{
+			int ascend_num=i;
+			for (i=len-1;i>=ascend_num;i--)
+			{
+				if (str[i]>str[ascend_num-1])
+				{
+					char c_temp=str[i];
+					str[i]=str[ascend_num-1];
+					str[ascend_num-1]=c_temp;
+					break;
+				}
+			}
+
+			qsort(str+ascend_num,len-ascend_num,sizeof(char),cmp);
+			printf("%s\n",str);
+		}
+	}
+
+	return 0;
+}

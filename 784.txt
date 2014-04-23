@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <stack>
+#include <vector>
+#include <queue>
+#include <cmath>
+#define MAXN 1000
+using namespace std;
+bool isVisited[MAXN][MAXN];
+char maze[MAXN][MAXN];
+int line_num;
+
+void dfs(int x,int y)
+{
+	if(x<0||y<0||x>=line_num||y>=strlen(maze[x])||isVisited[x][y]||maze[x][y]=='X')
+		return;
+	isVisited[x][y]=true;
+	maze[x][y]='#';
+	dfs(x-1,y);
+	dfs(x,y-1);
+	dfs(x+1,y);
+	dfs(x,y+1);
+}
+
+void dealwith()
+{
+	int i,j,center_x,center_y;
+	for (i=0;i<line_num;i++)
+	{
+		bool isDisc=false;
+		for (j=0;j<strlen(maze[i]);j++)
+		{
+			if(maze[i][j]=='*')
+			{
+				center_x=i;
+				center_y=j;
+				isDisc=true;
+				break;
+			}
+		}
+		if(isDisc)
+			break;
+	}
+	dfs(center_x,center_y);
+}
+
+void paint()
+{
+	int i;
+	for (i=0;i<=line_num;i++)
+		printf("%s\n",maze[i]);
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,t_count;
+	freopen("input.txt","r",stdin);
+	scanf("%d",&t_count);
+	getchar();
+	while (t_count--)
+	{
+		line_num=0;
+		memset(isVisited,0,sizeof(isVisited));
+		memset(maze,0,sizeof(maze));
+		while (true)
+		{
+			gets(maze[line_num]);
+			bool isTerm=true;
+			for (i=0;i<strlen(maze[line_num]);i++)
+			{
+				if(maze[line_num][i]!='_')
+				{
+					isTerm=false;
+					break;
+				}
+			}
+			if(isTerm)
+				break;
+			line_num++;
+		}
+		dealwith();
+		paint();
+	}
+	return 0;
+}

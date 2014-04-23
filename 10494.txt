@@ -1,0 +1,70 @@
+//对于乘除法一定要考虑0的异常情况，这里我就是没有考虑0的情况所以导致一直wa，而且这里不用考虑负数除法
+
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 10000
+
+char num1[MAXN]="",num2[MAXN]="";
+char str[MAXN]="";
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,j,k;
+	char oper;
+	long int n;
+	while(scanf("%s %c %ld",str,&oper,&n)!=EOF)
+	{
+		long long int temp=0,res[MAXN],sum=0;
+		memset(res,0,sizeof(res));
+
+		if(oper=='/')
+		{
+			if(strcmp(str,"0")==0)
+			{
+				printf("0\n");
+				continue;
+			}
+
+			for (i=0;i<strlen(str);i++)
+			{
+				temp=temp*10+str[i]-'0';
+				if(temp>=n)	
+				{
+					res[i]=temp/n;
+					temp=temp%n;
+				}
+				else
+					res[i]=0;
+			}
+			for(i=0;i<strlen(str);i++)
+			{
+				if(res[i]!=0)	break;
+			}
+			for (;i<strlen(str);i++)
+			{
+				printf("%ld",res[i]);
+			}
+			printf("\n");
+		}
+		else
+		{
+			for(i=0;i<strlen(str);i++)
+			{
+				temp=temp*10+str[i]-'0';
+				temp=temp%n;
+			}
+			printf("%ld\n",temp);
+		}
+
+		memset(str,0,sizeof(str));
+	}
+
+	return 0;
+}
+
+
+

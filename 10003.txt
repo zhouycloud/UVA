@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <map>
+#include <cmath>
+#include <algorithm>
+#include <queue>
+#define MAXN 3000000
+#define MAXO 10005
+#define Min 1e-9
+#define INF 1e9
+using namespace std;
+int l,n,c[50];
+bool is_cut[50];
+int d[1000][1000];
+
+int dp(int i,int j)
+{
+	int k;
+	if(d[i][j]!=-1)	return d[i][j];
+	
+	d[i][j]=INF;
+	for (k=0;k<n;k++)
+	{
+		if(i<c[k]&&c[k]<j)
+		{
+			int fir=dp(i,c[k]);
+			int sec=dp(c[k],j);
+			if(d[i][j]>fir+sec)
+				d[i][j]=fir+sec;
+		}
+	}
+	d[i][j]=j-i+d[i][j];
+	return d[i][j];
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,t_count=0,t_num,p,q;
+	freopen("input.txt","r",stdin);
+	while (scanf("%d",&l)!=EOF&&l!=0)
+	{
+		memset(d,-1,sizeof(d));
+		memset(is_cut,0,sizeof(is_cut));
+
+		int former=0;
+		scanf("%d",&n);
+		for (i=0;i<n;i++)
+			scanf("%d",&c[i]);
+
+		for (i=0;i<n;i++)
+		{
+			d[former][c[i]]=0;
+			former=c[i];
+		}
+		d[former][l]=0;
+
+		printf("The minimum cutting is %d.\n",dp(0,l));
+	}
+
+	return 0;
+}

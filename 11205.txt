@@ -1,0 +1,81 @@
+//太高兴了，成功AC这道题目，主要使用的是全排列生成算法
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <cmath>
+#define MAXN 1001
+#define INF 999999
+#define PLUS_CONSTANT 500
+using namespace std;
+int col,row;
+int codification[MAXN][MAXN];
+bool status[MAXN][MAXN];
+int status_num;
+
+int dealwith(int s)
+{
+	int i,j,sum,k;
+	bool isChoose[MAXN];
+	memset(isChoose,0,sizeof(isChoose));
+	sum=0;
+
+	for (i=0;i<col;i++)
+	{
+		if(s&(1<<i))
+		{
+			isChoose[i]=true;
+			sum++;
+		}
+	}
+	
+	for (i=0;i<row;i++)
+	{
+		for (j=i+1;j<row;j++)
+		{
+			bool isSame=true;
+			for (k=0;k<col;k++)
+			{
+				if(codification[i][k]!=codification[j][k]&&!isChoose[k])
+				{
+					isSame=false;
+					break;
+				}
+			}
+			if(isSame)
+				return -1;
+		}
+	}
+
+	return col-sum;
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,t_count;
+	freopen("input.txt","r",stdin);
+	scanf("%d",&t_count);
+	while (t_count--)
+	{
+		memset(codification,0,sizeof(codification));
+		scanf("%d %d",&col,&row);
+		for (i=0;i<row;i++)
+			for (j=0;j<col;j++)
+				scanf("%d",&codification[i][j]);
+		int min=99999;
+		for (i=0;i<(1<<col);i++)//这里出现过错误，因为i=0必须要包括在内，因为0表示所有的都不取消掉
+		{
+			int temp=dealwith(i);
+			if(temp!=-1)
+			{
+				if(min>temp)
+					min=temp;
+			}
+		}
+		printf("%d\n",min);
+	}
+
+	return 0;
+}

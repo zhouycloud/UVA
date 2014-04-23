@@ -1,0 +1,173 @@
+//这一部分耗时两天，我勒个去，其中东西值得我思考啊。
+//首先，构造树可以不使用递归的方法，对于叶子结点明确的情况下且存在前序遍历的情况，例如：本题的叶
+//子就是e和f，可以用栈来构造树，最好还是不要用stl的queue以及stack，因为他们可能导致tle
+//
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <stack>
+#include <vector>
+#include <queue>
+#include <cmath>
+#define MAXN 20005
+using namespace std;
+
+char str1[MAXN],str2[MAXN];
+struct node
+{
+	int child[4];
+	char status;
+	bool isFull;
+}tree[MAXN];
+
+bool isFull(node **stack_vec,int top)
+{
+	bool isNodeFull=true;
+	if(top<5)
+		return false;
+	int i;
+	for (i=0;i<4;i++)
+	{
+		node* temp=stack_vec[top-1-i];
+		if(!temp->isFull)
+			return false;
+	}
+	return true;
+}
+
+void buildtree(char *str,int startpos)
+{
+	node* stack_vec[MAXN];
+	int i,len=strlen(str),j,stack_vec_size,top=0;
+	for (i=0;i<len;i++)
+	{
+		node *ptr=tree+startpos+i;
+		stack_vec[top++]=ptr;
+		stack_vec_size=top;
+		if(stack_vec_size<5)
+			continue;
+		//stack_vec_size>=5&&~p
+		if(str[i]!='p')
+		{				
+			while (isFull(stack_vec,top))
+			{
+				node *parent=stack_vec[top-1-4];
+				for (j=0;j<4;j++)
+				{
+					node* temp=stack_vec[--top];
+					parent->child[3-j]=temp-tree;
+				}
+				parent->isFull=true;
+				
+			}
+		}
+	}
+}
+
+int compute(node* n_root,int stratum)
+{
+	node* que[MAXN];
+	int stra[MAXN],front,rear;
+	front=rear=0;
+	que[rear]=n_root;
+	stra[rear++]=stratum;
+	int i,j,count,sum;
+	count=stratum;
+	sum=0;
+
+	while (front<rear)
+	{
+		node* no=que[front];
+		int f=stra[front++];
+
+		if(no->status=='f')
+			sum=sum+1024/(pow(2.0,(f-1)*2));
+		else if(no->status=='p')
+		{
+			++count;
+			for (i=0;i<4;i++)
+			{
+				que[rear]=no->child[i]+tree;
+				stra[rear++]=count;
+			}
+		}
+	}
+	return sum;
+}
+
+void mergetree(int firstroot,int secondroot,int newroot)
+{
+	node *queue_1[MAXN],*queue_2[MAXN];
+	int stratum[MAXN],front,rear;
+	front=rear=0;
+	queue_1[rear]=tree+firstroot;
+	queue_2[rear]=tree+secondroot;
+	stratum[rear++]=1;
+	int i,j,count=1,sum=0;
+	while (front<rear)
+	{
+		node* queue_1_node=queue_1[front];
+		node* queue_2_node=queue_2[front];
+		int f=stratum[front++];
+
+		if(queue_1_node->status=='p'&&queue_2_node->status=='p')
+		{
+			++f;//这个地方可能导致错误，用UVA题目中的测试数据也是测试不出来的
+			for (i=0;i<4;i++)
+			{
+				queue_1[rear]=queue_1_node->child[i]+tree;
+				queue_2[rear]=queue_2_node->child[i]+tree;
+				stratum[rear++]=f;
+			}
+		}
+		else if(queue_1_node->status=='p'&&queue_2_node->status=='e')
+			sum+=compute(queue_1_node,f);
+		else if(queue_2_node->status=='p'&&queue_1_node->status=='e')
+			sum+=compute(queue_2_node,f);
+		else if((queue_1_node->status=='p'||queue_1_node->status=='e')&&queue_2_node->status=='f')
+			sum=sum+1024/(pow(2.0,(f-1)*2));
+		else if(queue_1_node->status=='f'&&(queue_2_node->status=='p'||queue_2_node->status=='e'||queue_2_node->status=='f'))
+			sum=sum+(1024)/(pow(2.0,(f-1)*2));			
+	}
+	printf("There are %d black pixels.\n",sum);
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,temp,n;
+	freopen("input.txt","r",stdin);
+	scanf("%d\n",&n);
+
+	while (n--)
+	{
+		scanf("%s",str1);
+		scanf("%s",str2);
+		int len1=strlen(str1);
+		int len2=strlen(str2);
+		for (i=0;i<len1;i++)
+		{
+			tree[i].child[1]=tree[i].child[2]=tree[i].child[3]=tree[i].child[4]=-1;
+			tree[i].status=str1[i];
+			if(str1[i]=='p')
+				tree[i].isFull=false;
+			else
+				tree[i].isFull=true;
+		}
+		for (;(i-len1)<len2;i++)
+		{
+			tree[i].child[1]=tree[i].child[2]=tree[i].child[3]=tree[i].child[4]=-1;
+			tree[i].status=str2[i-len1];
+			if(str2[i-len1]=='p')
+				tree[i].isFull=false;
+			else
+				tree[i].isFull=true;
+		}
+
+		buildtree(str1,0);
+		buildtree(str2,strlen(str1));
+		mergetree(0,strlen(str1),strlen(str1)+strlen(str2));
+
+	}
+	return 0;
+}

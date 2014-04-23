@@ -1,0 +1,98 @@
+//题目意思不完全正确，居然要判断强联通
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <cmath>
+#define MAXN 1001
+using namespace std;
+int DGAM[MAXN][MAXN],n,r,cnt;
+bool isvisit[MAXN];
+
+void dfs(int start_pos)
+{
+	int i;
+	cnt++;
+	for (i=0;i<n;i++)
+	{
+		if(!isvisit[i]&&DGAM[start_pos][i]!=0)
+		{
+			isvisit[i]=true;
+			dfs(i);
+		}
+	}
+}
+
+void euler(int start_pos)
+{
+	int i;
+	for (i=0;i<n;i++)
+	{
+		if(DGAM[start_pos][i]>0)
+		{
+			DGAM[start_pos][i]--;
+			DGAM[i][start_pos]--;
+			euler(i);
+		}
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,start_pos;
+	freopen("input.txt","r",stdin);
+	while (scanf("%d %d",&n,&r)!=EOF)
+	{
+		memset(DGAM,0,sizeof(DGAM));
+		memset(isvisit,0,sizeof(isvisit));
+		for (i=0;i<r;i++)
+		{
+			int fir,sec;
+			scanf("%d %d",&fir,&sec);
+			start_pos=fir;
+			DGAM[fir][sec]++;
+			DGAM[sec][fir]++;
+		}
+
+		bool isEulerExist=true;
+		for (i=0;i<n;i++)
+		{
+			int degree=0;
+			for (j=0;j<n;j++)
+			{
+				if (DGAM[i][j]!=0)
+					degree+=DGAM[i][j];
+			}
+			if(degree%2!=0)
+			{
+				isEulerExist=false;
+				break;
+			}
+		}
+		if (!isEulerExist)
+		{
+			printf("Not Possible\n");
+			continue;
+		}
+
+		cnt=0;
+		dfs(start_pos);
+		if(cnt<n)
+		{
+			printf("Not Possible\n");
+			continue;
+		}
+
+		euler(start_pos);
+
+		
+		if(!isEulerExist)
+			printf("Not Possible\n");
+		else
+			printf("Possible\n");
+	}
+	
+
+	return 0;
+}

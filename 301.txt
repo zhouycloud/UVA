@@ -1,0 +1,68 @@
+//这道题优化了很多东西才通过，第一次是2.6s左右过的，后来发现judge里面不需要判定以前的元素。在最后判断的时候，不需要每一次都重新计算总值，后者提升比较明显
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <cmath>
+#include <algorithm>
+#define MAXN 100
+#define INF 999999
+#define PLUS_CONSTANT 500
+using namespace std;
+int n,num_cities,num_orders,cnt,temp_arr[MAXN];
+struct node
+{
+	int start,end,people;
+	bool isChoose;
+}orders[MAXN];
+
+bool judge(int cur)
+{
+	int i,j;
+	for (i=orders[cur].start;i<orders[cur].end;i++)
+	{
+		if(temp_arr[i]>n)
+			return false;
+	}
+	return true;
+}
+
+void dealwith(int cur,int sum)
+{
+	int i;
+	if(cur==num_orders)
+	{
+		if(sum>cnt)
+			cnt=sum;
+		return;
+	}
+	orders[cur].isChoose=true;
+	for (i=orders[cur].start;i<orders[cur].end;i++)
+		temp_arr[i]+=orders[cur].people;
+	if(judge(cur))
+		dealwith(cur+1,sum+(orders[cur].end-orders[cur].start)*orders[cur].people);
+	orders[cur].isChoose=false;
+	for (i=orders[cur].start;i<orders[cur].end;i++)
+		temp_arr[i]-=orders[cur].people;
+	dealwith(cur+1,sum);
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,t_count=0,fir,sec,num_cus;
+	freopen("input.txt","r",stdin);
+
+	while (scanf("%d %d %d",&n,&num_cities,&num_orders)!=EOF&&n!=0)
+	{
+		memset(orders,0,sizeof(orders));
+		memset(temp_arr,0,sizeof(temp_arr));
+		cnt=0;
+		for (i=0;i<num_orders;i++)
+			scanf("%d %d %d",&orders[i].start,&orders[i].end,&orders[i].people);
+		dealwith(0,0);
+		printf("%d\n",cnt);
+	}
+
+	return 0;
+}

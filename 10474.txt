@@ -1,0 +1,133 @@
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 10000
+
+int num[MAXN],query[MAXN];
+char nation[MAXN][100],str[MAXN],womanAndNation[MAXN][100];
+bool codeCap[MAXN],guessCap[MAXN];
+
+bool isFind(char strings[][100],char str[],int n,int& place)
+{
+	int i;
+	for (i=0;i<n;i++)
+	{
+		if(strcmp(strings[i],str)==0)
+		{
+			place=i;
+			return true;
+		}
+	}
+	return false;
+}
+
+int int_cmp(const void* a,const void* b)
+{
+	int *A=(int*)a;
+	int *B=(int*)b;
+	if(*A>*B)	return 1;
+	if(*A==*B)	return 0;
+	if(*A<*B)	return -1;
+}
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,j,k,n,q;
+	int round=1;
+	while(scanf("%d %d\n",&n,&q)!=EOF)
+	{
+		if(n==0&&q==0)
+			break;
+		memset(num,0,sizeof(num));
+		memset(query,0,sizeof(query));
+
+		for (i=0;i<n;i++)
+		{
+			scanf("%d\n",&num[i]);
+		}
+		for (i=0;i<q;i++)
+		{
+			scanf("%d\n",&query[i]);
+		}
+		qsort(num,n,sizeof(int),int_cmp);
+		printf("CASE# %d:\n",round++);
+		for(i=0;i<q;i++)
+		{
+			for(j=0;j<n;j++)
+			{
+				if(num[j]==query[i])
+					break;
+			}
+			if(j<n)
+				printf("%d found at %d\n",query[i],j+1);
+			else
+				printf("%d not found\n",query[i]);
+
+		}
+	}
+	
+	return 0;
+}
+
+
+二分查找算法
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <cmath>
+#include <algorithm>
+#define MAXN 10005
+#define INF 999999
+#define PLUS_CONSTANT 500
+using namespace std;
+int n;
+int nums[MAXN];
+
+int cmp(const void* a,const void* b)
+{
+	return *(int*)a-*(int*)b;
+}
+
+void bisearch(int target,int n)
+{
+	int i=1,j=n;
+	while (i<j)
+	{
+		int m=i+(j-i)/2;
+		if(target<=nums[m])	j=m;
+		else i=m+1;
+	}
+	if(target==nums[j])
+		printf("%d found at %d\n",target,j);
+	else
+		printf("%d not found\n",target);
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,t_count=0,n,q,target;
+	bool flag=false;
+	freopen("input.txt","r",stdin);
+
+	while (scanf("%d %d",&n,&q)!=EOF&&n!=0)
+	{
+		memset(nums,0,sizeof(nums));
+		for (i=1;i<=n;i++)
+			scanf("%d",&nums[i]);
+		qsort(nums+1,n,sizeof(nums[0]),cmp);
+		
+		printf("CASE# %d:\n",++t_count);
+		for (i=0;i<q;i++)
+		{
+			scanf("%d",&target);
+			bisearch(target,n);
+		}
+	}
+
+	return 0;
+}

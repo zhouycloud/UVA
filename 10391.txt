@@ -1,0 +1,97 @@
+//这道题目不要忘了一个单词不能输出多次
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <map>
+#include <cmath>
+#include <algorithm>
+#include <queue>
+#define MAXN 1000000
+#define INF 1e9
+#define SWAP(X,Y) X=X+Y;Y=X-Y;X=X-Y
+using namespace std;
+const int MAXHASHSIZE=MAXN+3;
+string words[MAXN];
+int head[MAXHASHSIZE],next_hash[MAXN],max_index;
+
+int hash_loc(string str)
+{
+	int i,v=0;
+	for (i=0;i<str.length();i++)
+	{
+		v=v*10+str[i]-'a'+1;
+		v=v%MAXHASHSIZE;
+	}
+	return v;
+}
+
+bool try_to_insert(char s[100])
+{
+	string word=s;
+	int h=hash_loc(word);
+	int u=head[h];
+	while (u!=-1)
+	{
+		if(word.compare(words[u])==0)
+			return false;
+		u=next_hash[u];
+	}
+	words[max_index]=word;
+	next_hash[max_index]=head[h];
+	head[h]=max_index;
+	max_index++;
+	return true;
+}
+
+bool is_find(string str)
+{
+	int h=hash_loc(str);
+	int u=head[h];
+	while (u!=-1)
+	{
+		if(str.compare(words[u])==0)
+			return true;
+		u=next_hash[u];
+	}
+	return false;
+}
+
+void dealwith()
+{
+	int i,j;
+	for (i=0;i<max_index;i++)
+	{
+		for (j=1;j<words[i].length();j++)
+		{
+			string fir,sec;
+			fir=words[i].substr(0,j);
+			sec=words[i].substr(j,words[i].length()-j);
+			if(is_find(fir)&&is_find(sec))
+			{
+				printf("%s\n",words[i].c_str());
+				break;
+			}
+		}
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,z,count,t_count=0;
+	char tmp[100],chr;
+	bool flag;
+	freopen("input.txt","r",stdin);
+	memset(head,-1,sizeof(head));
+	memset(next_hash,-1,sizeof(next_hash));
+	max_index=0;
+	i=0;
+	while(scanf("%s",tmp)!=EOF)
+	{
+		try_to_insert(tmp);
+	}
+
+	dealwith();
+
+	return 0;
+}

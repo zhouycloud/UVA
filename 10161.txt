@@ -1,0 +1,67 @@
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 3000
+
+
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,k,j,n;
+	while(scanf("%d\n",&n)!=EOF)
+	{
+		if(n==0)
+			break;
+		double square_root=pow(n,0.5);
+		int floor_num=square_root;
+		int up_num=square_root+1;
+		if(n==floor_num*floor_num)
+		{
+			if(n%2==1)
+				printf("1 %d\n",floor_num);
+			else
+				printf("%d 1\n",floor_num);
+			continue;
+		}
+
+		int start=floor_num*floor_num+1;
+		int row,col;
+		if(floor_num%2==1)
+		{
+			row=up_num,col=1;
+
+			while(start!=n)
+			{
+				if(row>col)
+					col++;
+				else
+					row--;
+				start++;
+			}
+		}
+		else
+		{
+			row=1,col=up_num;
+
+			while(start!=n)
+			{
+				if(row<col)
+					row++;
+				else if(row>=col)
+					col--;
+				start++;
+			}
+		}
+		printf("%d %d\n",col,row);
+	}
+
+
+
+	return 0;
+}
+
+
+

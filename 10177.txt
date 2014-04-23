@@ -1,0 +1,41 @@
+//◊¢“‚ π”√long long int
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 20000
+#define MAX_INT 999999999
+int num[MAXN],res[MAXN];
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,j,fir,sec,n,k;
+	
+	while(scanf("%d",&n)!=EOF)
+	{
+		for (i=2;i<=4;i++)
+		{
+			long long int tot=pow(n*(n+1)/2.0,i);
+			long long int square_sum=0;
+			for (j=1;j<=n;j++)
+			{
+				int temp=j;
+				for (k=0;k<i-1;k++)
+				{
+					temp*=j;
+				}
+				square_sum+=temp;
+			}
+			printf("%lld %lld",square_sum,(tot-square_sum));
+			if (i!=4)
+				printf(" ");
+		}
+		printf("\n");
+	}
+
+	return 0;
+}
+
+

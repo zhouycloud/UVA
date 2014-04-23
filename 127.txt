@@ -1,0 +1,164 @@
+//首先要读懂题目，其次本题目没有在UVA上面AC过，因为TLE，目测是因为用的链式结构而不是数组导致的。在POJ上面AC了，因为它的时间长点
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#define MAXN 100
+using namespace std;
+
+struct pack
+{
+	string str[MAXN];
+	int n;
+	pack *next,*prev;
+};
+
+pack* allocate(char *t)
+{
+	pack* p=new pack;
+	p->n=0;
+	p->next=p->prev=NULL;
+	p->str[p->n++]=t;
+	return p;
+}
+
+pack* FindThreeBefore(pack *p)
+{
+	int i;
+
+	for(i=0;i<=2;i++)
+	{
+		if(p->prev==NULL)
+			return NULL;
+		p=p->prev;
+	}
+	return p;
+}
+
+void calc(pack *start)
+{
+	int i,j,k;
+	pack *p_start=start;
+
+	bool isRemove;
+	while (true)
+	{
+		isRemove=false;
+		p_start=start->next;
+		if(p_start==NULL)
+			break;
+
+		while (p_start!=NULL)
+		{
+			string p_str=p_start->str[p_start->n-1];
+			pack *three_before=FindThreeBefore(p_start);
+			if(three_before!=NULL)
+			{
+				string three_before_str=three_before->str[three_before->n-1];
+				if(p_str[0]==three_before_str[0]||p_str[1]==three_before_str[1])
+				{
+					three_before->str[three_before->n++]=p_start->str[--p_start->n];
+					isRemove=true;
+					if(p_start->n==0)
+					{
+						p_start->prev->next=p_start->next;
+						if(p_start->next!=NULL)
+							p_start->next->prev=p_start->prev;
+
+						pack *delt=p_start;
+
+						/*free(delt);*/
+						delete delt;
+					}
+					p_start=three_before;
+					continue;
+				}
+			}
+
+			pack *prev=p_start->prev;
+			if(prev!=NULL)
+			{
+				string prev_str=prev->str[prev->n-1];
+				if(p_str[0]==prev_str[0]||p_str[1]==prev_str[1])
+				{
+					prev->str[prev->n++]=p_start->str[--p_start->n];
+					isRemove=true;
+					if(p_start->n==0)
+					{
+						p_start->prev->next=p_start->next;
+						if(p_start->next!=NULL)
+							p_start->next->prev=p_start->prev;
+
+						pack *delt=p_start;
+
+						/*free(delt);*/
+						delete delt;
+					}
+					p_start=prev;
+					continue;
+				}
+			}
+			p_start=p_start->next;
+		}
+		if(!isRemove)
+			break;
+	}
+	
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k;
+	freopen("input.txt","r",stdin);
+	while (true)
+	{
+		char temp[3];
+		if(scanf("%s",temp)==EOF)
+			break;
+		if(strcmp(temp,"#")==0)
+			break;
+
+		pack *start=allocate(temp);
+		pack *former=start;
+
+		for (i=1;i<=51;i++)
+		{
+			scanf("%s",temp);
+			pack *input=allocate(temp);
+			former=start;
+			while (former->next!=NULL)
+				former=former->next;
+			former->next=input;
+			input->prev=former;
+			calc(start);
+		}
+
+		
+		pack *p_start=start;
+
+		int num=0,pack_n[100];
+		memset(pack_n,0,sizeof(pack_n));
+
+		while (p_start!=NULL)
+		{
+			num++;
+			pack_n[num]=p_start->n;
+			p_start=p_start->next;
+		}
+		if(num==1)
+			printf("1 pile remaining: 52\n");
+		else
+		{
+			printf("%d piles remaining: ",num);
+			for (i=1;i<=num;i++)
+			{
+				if(i!=num)
+					printf("%d ",pack_n[i]);
+				else
+					printf("%d\n",pack_n[i]);
+			}
+		}
+	}
+	return 0;
+}

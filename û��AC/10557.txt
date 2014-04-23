@@ -1,0 +1,132 @@
+//µ›πÈ’“ª∑
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <cmath>
+#define MAXN 500
+using namespace std;
+
+struct node
+{
+	int remain_value,id;
+}visit_sequence[MAXN];
+
+bool isVisited[MAXN],isWinnable;
+int room_num,DGAM[MAXN][MAXN],room[MAXN],is_in_visit_sequence[MAXN];
+
+bool CanGetToEnd(int current_room_num)
+{
+	const int queue_leng=500;
+	int i,front,rear,queue_array[queue_leng],count;
+	front=rear=count=0;
+	memset(isVisited,0,sizeof(isVisited));
+
+	queue_array[rear++]=current_room_num;
+	count++;
+	while (count>0)
+	{
+		int top=queue_array[front++];
+		if(front==queue_leng)
+			front=0;
+		count--;
+		if(top==room_num)
+			return true;
+		for (i=1;i<=DGAM[top][0];i++)
+		{
+			if(!isVisited[DGAM[top][i]])
+			{
+				queue_array[rear++]=DGAM[top][i];
+				if(rear==queue_leng)
+					rear=0;
+				count++;
+				isVisited[DGAM[top][i]]=true;
+			}
+		}
+	}
+	return false;
+}
+
+void dfs(int current_room_num,int current_energe,int top)
+{
+	int i,j;
+	
+	if(current_room_num==room_num)
+	{
+		if(current_energe>0)
+			isWinnable=true;
+		return;
+	}
+
+	node t;
+	t.remain_value=current_energe;
+	t.id=current_room_num;
+
+	visit_sequence[top++]=t;
+	is_in_visit_sequence[current_room_num]=top-1;
+
+	for (i=1;i<=DGAM[current_room_num][0];i++)
+	{
+		int next_room=DGAM[current_room_num][i];
+
+		if(is_in_visit_sequence[next_room]!=-1)
+		{
+			if(!CanGetToEnd(current_room_num))
+				continue;
+			if(visit_sequence[is_in_visit_sequence[next_room]].remain_value<(current_energe+room[visit_sequence[is_in_visit_sequence[next_room]].id]))
+			{
+				isWinnable=true;
+				return;
+			}
+		}
+		else
+		{
+			int next_energe=current_energe+room[next_room];
+			if(next_energe<=0)
+				continue;
+			dfs(next_room,next_energe,top);
+		}
+		if(isWinnable)
+			return;
+	}
+	is_in_visit_sequence[current_room_num]=-1;
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,t_count=1,count,max,energe,next_room_num;
+	freopen("input.txt","r",stdin);
+	while (scanf("%d\n",&room_num)!=EOF)
+	{
+		memset(DGAM,0,sizeof(DGAM));
+		memset(room,0,sizeof(room));
+		memset(isVisited,0,sizeof(isVisited));
+		memset(visit_sequence,0,sizeof(visit_sequence));
+		memset(is_in_visit_sequence,-1,sizeof(is_in_visit_sequence));
+		isWinnable=false;
+
+		if(room_num==-1)
+			break;
+		for (i=1;i<=room_num;i++)
+		{
+			scanf("%d %d",&energe,&next_room_num);
+			DGAM[i][0]=next_room_num;
+			room[i]=energe;
+
+			for (j=1;j<=next_room_num;j++)
+				scanf("%d",&DGAM[i][j]);
+		}
+
+		if(!CanGetToEnd(1))
+			printf("hopeless\n");
+		int top=0;
+		dfs(1,100,top);
+		if(isWinnable)
+			printf("winnable\n");
+		else
+			printf("hopeless\n");
+	}
+
+	return 0;
+}

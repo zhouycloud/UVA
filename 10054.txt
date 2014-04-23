@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <cmath>
+#define MAXN 1001
+using namespace std;
+int DGAM[MAXN][MAXN],stack_array[10000],top;
+bool isVisited[MAXN],isVisited_cpy[MAXN];
+
+void dfs(int start_pos)
+{
+	int i;
+	for (i=1;i<=50;i++)
+	{
+		if(DGAM[start_pos][i]>0&&!isVisited_cpy[i])
+		{
+			isVisited_cpy[i]=true;
+			dfs(i);
+		}
+	}
+}
+
+void euler(int start_pos)
+{
+	int i;
+	for (i=1;i<=50;i++)
+	{
+		if(DGAM[start_pos][i]>0)
+		{
+			DGAM[start_pos][i]--;
+			DGAM[i][start_pos]--;
+			euler(i);
+			////////////////
+			printf("%d %d\n",i,start_pos);
+		}
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,t_count=1,count=0,n,edge_num,start_pos,end_count;
+	freopen("input.txt","r",stdin);
+	scanf("%d",&t_count);
+	while (t_count--)
+	{
+		memset(DGAM,0,sizeof(DGAM));
+		for (i=0;i<MAXN;i++)
+			isVisited[i]=true;
+		memset(stack_array,0,sizeof(stack_array));
+		top=0;
+		scanf("%d",&edge_num);
+		start_pos=-1;
+		for (i=0;i<edge_num;i++)
+		{
+			int color_1,color_2;
+			scanf("%d %d",&color_1,&color_2);
+			if(start_pos==-1)
+				start_pos=color_1;
+
+			DGAM[color_1][color_2]++;
+			DGAM[color_2][color_1]++;
+			isVisited[color_1]=isVisited[color_2]=false;
+		}
+
+		bool isEulerExist=true;
+		for (i=1;i<=50;i++)
+		{
+			if(!isVisited[i])
+			{
+				int degree=0;
+				for (j=1;j<=50;j++)
+				{
+					if(i==j)
+						continue;
+					if(DGAM[i][j]!=0)
+						degree+=DGAM[i][j];
+				}
+				if(degree==0||degree%2!=0)
+				{
+					isEulerExist=false;
+					break;
+				}
+			}
+		}
+
+		if(count>0)
+			printf("\n");
+
+		printf("Case #%d\n",++count);
+		if(!isEulerExist)
+		{
+			printf("some beads may be lost\n");
+			continue;
+		}
+		memcpy(isVisited_cpy,isVisited,sizeof(isVisited));
+		dfs(start_pos);
+		for (i=1;i<=50;i++)
+		{
+			if(!isVisited_cpy[i])
+			{
+				isEulerExist=false;
+				break;
+			}
+		}
+		if(!isEulerExist)
+		{
+			printf("some beads may be lost\n");
+			continue;
+		}
+
+		
+		euler(start_pos);
+	}
+
+	return 0;
+}

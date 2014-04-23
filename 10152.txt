@@ -1,0 +1,56 @@
+//这道题的算法我没有想出来，值得反省啊
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <stack>
+#define MAXN 300
+using namespace std;
+
+int dole[100];
+string former[MAXN],reorder[MAXN];
+stack<string> str_stack;
+
+void calc(int num)
+{
+	int i,f=num-1,r=num-1;
+	while (f>=0)
+	{
+		if(!former[f].compare(reorder[r]))
+			r--;
+		f--;
+	}
+	for (i=r;i>=0;i--)
+		printf("%s\n",reorder[i].c_str());
+}
+
+int main(int argc, char* argv[])
+{
+	int n,i,j,k,m,num;
+	freopen("input.txt","r",stdin);
+	scanf("%d\n",&n);
+	for(i=0;i<n;i++)
+	{
+		for (j=0;j<MAXN;j++)
+			former[j]=reorder[j]="";
+
+		scanf("%d\n",&num);
+		char temp[200];
+		for (j=0;j<num;j++)
+		{
+			fgets(temp,200,stdin);
+			temp[strlen(temp)-1]='\0';
+			former[j]=temp;
+		}
+		for (j=0;j<num;j++)
+		{
+			fgets(temp,100,stdin);
+			temp[strlen(temp)-1]='\0';
+			reorder[j]=temp;
+		}
+		calc(num);
+		printf("\n");
+	}
+	return 0;
+}

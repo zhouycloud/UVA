@@ -1,0 +1,37 @@
+//该题体现出了双精度浮点数的优势，可以将300位的字符串转化为双精度浮点数，然而long long int不行
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 10000
+
+char num1[MAXN]="",num2[MAXN]="",result[MAXN]="";
+char maxint[MAXN]="2147483647";
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	char oper;
+	memset(num1,0,sizeof(num1));
+	memset(num2,0,sizeof(num2));
+	memset(result,0,sizeof(result));
+	int i;
+
+	char str[MAXN]="";
+	while(scanf("%s %c %s\n",num1,&oper,num2)!=EOF)
+	{
+		double a=atof(num1);
+		double b=atof(num2);
+		printf("%s %c %s\n",num1,oper,num2);
+
+		if(a>2147483647)	printf("first number too big\n");
+		if(b>2147483647)	printf("second number too big\n");
+		if(oper=='*'&&a*b>2147483647)	printf("result too big\n");
+		if(oper=='+'&& a+b>2147483647)	printf("result too big\n");
+	}
+	return 0;
+}
+
+
+

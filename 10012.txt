@@ -1,0 +1,120 @@
+//这道题目的难点不在全排列，而在异常情况，认清楚该提的三种异常情况很有比要：
+WA1：判断矩形最小size的时候不能用最后一个圆的最右侧位置了，因为有可能最后一个圆很小，其最右侧的位置还不如其前一个圆的最右侧位置远，所以改用判断各圆圆心位置+半径的最大值作为矩形的最小size。
+ 
+WA2：在放置前几个圆的时候注意不能让圆的圆心位置-圆的半径<0。比如说第一个圆半径是1，第二个元半径100，放第二个元就不能让其与第一个圆相切因为那样圆的左边就超出矩形盒子的壁了！
+ 
+WA3：主函数中MinL设置的太小，估计测试数据的数有很大的，题目没有说半径最大是多少，开始设的是65536，结果WA，改成DBL_MAX就AC了！！
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <cmath>
+#include <algorithm>
+#define MAXN 100
+#define INF 1e9
+using namespace std;
+int n;
+double radius[MAXN],cnt;
+
+struct node 
+{
+	int idx;
+	double x;
+}temp_queue[MAXN];
+
+double compute(int cur,node *que)
+{
+	int i;
+	double cur_x,cur_y,x,y,temp;
+	cur_y=radius[que[cur].idx];
+	cur_x=0;
+
+	for (i=0;i<cur;i++)
+	{
+		x=que[i].x;
+		y=radius[que[i].idx];
+		
+		temp=x+2.0*sqrt(y*cur_y);
+		if(temp>cur_x)
+			cur_x=temp;
+	}
+	if(cur_x<cur_y)
+		cur_x=cur_y;
+
+	que[cur].x=cur_x;
+
+	return cur_x;
+}
+
+void dealwith(int cur,double sum,node* que)
+{
+	int i,j;
+	if(cnt<=sum)
+		return;
+	if(cur==n)
+	{
+		sum=0;
+		for (i=0;i<cur;i++)
+		{
+			double temp_sum=que[i].x+radius[que[i].idx];
+			if(temp_sum>sum)
+				sum=temp_sum;
+		}
+		if(cnt>sum)
+			cnt=sum;
+		return;
+	}
+	for (i=0;i<n;i++)
+	{
+		bool isInThere=false;
+		for (j=0;j<cur;j++)
+		{
+			if(que[j].idx==i)
+			{
+				isInThere=true;
+				break;
+			}
+		}
+		if(!isInThere)
+		{
+			que[cur].idx=i;
+			if(!cur)
+			{
+				que[cur].x=radius[i];
+				dealwith(cur+1,radius[i],que);
+			}
+			else
+			{
+				double length=compute(cur,que);
+				que[cur].x=length;
+				dealwith(cur+1,length,que);
+			}
+		}
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,t_count=0;
+	freopen("input.txt","r",stdin);
+	scanf("%d",&t_count);
+	while (t_count--)
+	{
+		scanf("%d",&n);
+		cnt=INF;
+		double width=0;
+		for (i=0;i<n;i++)
+		{
+			scanf("%lf",radius+i);
+			if(width<radius[i])
+				width=radius[i];
+		}
+		memset(temp_queue,0,sizeof(temp_queue));
+		dealwith(0,0.0,temp_queue);
+		printf("%.3lf\n",cnt);
+	}
+	
+	return 0;
+}

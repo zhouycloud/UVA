@@ -1,0 +1,53 @@
+//这道题目不错，需要多学学数学
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 20000
+#define MAX_INT 999999999
+
+int num[MAXN],res[MAXN],count,count_res;
+double c[MAXN];
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,j,fir,sec,n,k,year,dif,m,count;
+	
+
+	while(scanf("%d\n\n",&n)!=EOF)
+	{
+
+		for(i=0;i<n;i++)
+		{
+			scanf("%d\n",&m);
+			double a_0,a_n_1;
+			scanf("%lf\n",&a_0);
+			scanf("%lf\n",&a_n_1);
+
+			memset(c,0,sizeof(c));
+			for (j=0;j<m;j++)
+			{
+				scanf("%lf\n",&c[j]);
+			}
+			count=j;
+
+			double sum_c=0;
+			for (j=0;j<count;j++)
+			{
+				sum_c=sum_c+(count-j)*c[j];
+			}
+			sum_c*=2;
+
+			double res=(a_n_1+m*a_0-sum_c)/(m+1);
+			printf("%.2lf\n",res);
+			if(i!=n-1)
+				printf("\n");
+		}
+	}
+
+	return 0;
+}
+
+

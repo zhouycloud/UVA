@@ -1,0 +1,156 @@
+//题目倒不是很难，我对于输入的处理还不够细心，另外，忘记叶子结点的平很也要计算了，考虑不周全，还可以参考下大牛的代码，貌似只用了50行以内的递归实现
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <stack>
+#include <vector>
+#include <queue>
+#include <cmath>
+#define MAXN 50000
+using namespace std;
+
+char str1[1000];
+struct node
+{
+	int left,right,left_dist,right_dist;
+	int weight;
+	int flag;
+}tree[MAXN];
+
+bool isConditionMeet(node** stack_array,int top,int& flag)
+{
+	if(top<2)
+		return false;
+	if(stack_array[top-2]->flag==1&&stack_array[top-1]->flag==2)
+	{
+		flag=1;
+		return true;
+	}
+	if(top<3)
+		return false;
+	if(stack_array[top-1]->flag==2&&stack_array[top-2]->flag==2)
+	{
+		flag=2;
+		return true;
+	}
+	return false;
+}
+
+void buildtree(int count)
+{
+	node* stack_array[MAXN];
+	int i,top=0;
+	bool isBalance=true;
+	for (i=0;i<count;i++)
+	{
+		stack_array[top++]=tree+i;
+		if(tree[i].left!=0&&tree[i].right!=0)
+		{
+			int flag;
+			while(isConditionMeet(stack_array,top,flag))
+			{
+				node *right_child,*left_child,*parent;
+				if(flag==2)
+				{
+					right_child=stack_array[--top];
+					left_child=stack_array[--top];
+					parent=stack_array[top-1];
+					parent->left=left_child->weight;
+					parent->right=right_child->weight;
+					parent->weight=parent->left+parent->right;
+					parent->flag=2;
+				}
+				else if(flag==1)
+				{
+					right_child=stack_array[--top];
+					parent=stack_array[top-1];
+					if(parent->left==0)
+						parent->left=right_child->weight;
+					else if(parent->right==0)
+						parent->right=right_child->weight;
+
+					parent->weight=parent->right+parent->left;
+					parent->flag=2;
+				}
+				if(parent->left*parent->left_dist!=parent->right*parent->right_dist)
+				{
+					isBalance=false;
+					break;
+				}
+				
+			}
+			if(!isBalance)
+				break;
+		}
+	}
+	if(isBalance)
+		printf("YES\n");
+	else
+		printf("NO\n");
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,temp,n,count,t_count=0;
+	freopen("input.txt","r",stdin);
+	scanf("%d\n\n",&t_count);
+
+	while (t_count--)
+	{
+		memset(tree,0,sizeof(tree));
+		count=0;
+		bool isleafbalance=true;
+		while (true)
+		{
+			memset(str1,0,sizeof(str1));
+			fgets(str1,1000,stdin);
+			if(strcmp(str1,"")==0||strcmp(str1,"\n")==0)
+				break;
+			str1[strlen(str1)-1]='\0';
+			sscanf(str1,"%d %d %d %d",&tree[count].left,&tree[count].left_dist,&tree[count].right,&tree[count].right_dist);
+			if(tree[count].left!=0&&tree[count].right!=0)
+			{
+				tree[count].weight=tree[count].left+tree[count].right;
+				tree[count].flag=2;
+				if(tree[count].left*tree[count].left_dist!=tree[count].right*tree[count].right_dist)
+					isleafbalance=false;
+			}
+			else if((tree[count].left==0||tree[count].right==0)&&!(tree[count].left==0&&tree[count].right==0))
+			{
+				tree[count].weight=0;
+				tree[count].flag=1;
+			}
+			else
+			{
+				tree[count].weight=0;
+				tree[count].flag=0;
+			}
+			count++;
+		}
+		if(count==1)
+		{
+			int left_equil=tree[0].left*tree[0].left_dist;
+			int right_equil=tree[0].right*tree[0].right_dist;
+			if(left_equil==right_equil)
+			{
+				printf("YES\n");
+			}
+			else
+			{
+				printf("NO\n");
+			}
+			if(t_count!=0)
+				printf("\n");
+			continue;
+		}
+		if(!isleafbalance)
+			printf("NO\n");
+		else
+			buildtree(count);
+		if(t_count!=0)
+			printf("\n");
+	}
+
+	return 0;
+}

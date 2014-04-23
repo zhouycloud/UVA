@@ -1,0 +1,103 @@
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 10000
+
+int num[MAXN];
+char nation[MAXN][100],str[MAXN],womanAndNation[MAXN][100];
+bool codeCap[MAXN],guessCap[MAXN];
+
+bool isFind(char strings[][100],char str[],int n,int& place)
+{
+	int i;
+	for (i=0;i<n;i++)
+	{
+		if(strcmp(strings[i],str)==0)
+		{
+			place=i;
+			return true;
+		}
+	}
+	return false;
+}
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,j,k,n,round=1;
+	memset(str,0,sizeof(str));
+	memset(nation,0,sizeof(nation));
+	memset(num,0,sizeof(num));
+	memset(womanAndNation,0,sizeof(womanAndNation));
+
+	while(scanf("%d\n",&n)!=EOF)
+	{
+		int wnNum=0,nation_num=0;
+		for(i=0;i<n;i++)
+		{
+			fgets(str,MAXN,stdin);
+			str[strlen(str)-1]='\0';
+			char nationality[100];
+			memset(nationality,0,sizeof(nationality));
+
+			for (j=0;j<strlen(str);j++)
+			{
+				if(isalpha(str[j]))
+					nationality[j]=str[j];
+				else
+					break;
+			}
+			nationality[j+1]='\0';
+			int place=0;
+			if(!isFind(womanAndNation,str,wnNum,place))
+			{
+				strcpy(womanAndNation[wnNum++],str);
+			}
+			else
+				continue;
+			if(!isFind(nation,nationality,nation_num,place))
+			{
+				strcpy(nation[nation_num],nationality);
+				num[nation_num++]=1;
+			}
+			else
+				num[place]++;
+
+			memset(str,0,sizeof(str));
+		}
+
+		for (i=0;i<nation_num;i++)
+		{
+			for (j=i+1;j<nation_num;j++)
+			{
+				if(strcmp(nation[i],nation[j])>0)
+				{
+					char temp[100];
+					strcpy(temp,nation[j]);
+					strcpy(nation[j],nation[i]);
+					strcpy(nation[i],temp);
+
+					int temperal=num[j];
+					num[j]=num[i];
+					num[i]=temperal;
+				}
+			}
+		}
+
+		for (i=0;i<nation_num;i++)
+		{
+			printf("%s %d\n",nation[i],num[i]);
+		}
+		memset(nation,0,sizeof(nation));
+		memset(num,0,sizeof(num));
+		memset(womanAndNation,0,sizeof(womanAndNation));
+	}
+
+
+	return 0;
+}
+
+
+

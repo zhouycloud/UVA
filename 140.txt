@@ -1,0 +1,125 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <map>
+#include <cmath>
+#include <algorithm>
+#define MAXN 100
+#define INF 1e9
+using namespace std;
+int max_row,min_band,result[MAXN];
+bool GAM[MAXN][MAXN];
+
+int find_in_map(char str[],char chr)
+{
+	int i;
+	for (i=0;i<max_row;i++)
+	{
+		if(str[i]==chr)
+			return i;
+	}
+	str[max_row++]=chr;
+	return (max_row-1);
+}
+
+int compute(int cur,int sum,int *a)
+{
+	int i,last=a[cur];
+	for (i=0;i<cur;i++)
+	{
+		if(GAM[a[i]][last]&&(cur-i)>sum)
+			return cur-i;
+	}
+	return sum;
+}
+
+void dealwith(int cur,int sum,int *a)
+{
+	if(cur==max_row)
+	{
+		if(sum<min_band)
+		{
+			min_band=sum;
+			memcpy(result,a,sizeof(result));
+		}
+		return;
+	}
+	if(sum>=min_band)
+		return;
+	int i,j;
+
+	for (i=0;i<max_row;i++)
+	{
+		bool ok=false;
+		for (j=0;j<cur;j++)
+		{
+			if(a[j]==i)
+			{
+				ok=true;
+				break;
+			}
+		}
+		if(!ok)
+		{
+			a[cur]=i;
+			dealwith(cur+1,compute(cur,sum,a),a);
+		}
+	}
+}
+
+int cmp(const void *a,const void *b)
+{
+	return *(char*)a-*(char*)b;
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,z,t_count=0,row,col;
+	freopen("input.txt","r",stdin);
+	char str[MAXN];
+	while (scanf("%s",str)!=EOF&&strcmp(str,"#"))
+	{
+		int len=strlen(str);
+		char chr[8];
+		max_row=0;
+		min_band=INF;
+		memset(result,0,sizeof(result));
+		memset(chr,0,sizeof(chr));
+		memset(GAM,0,sizeof(GAM));
+
+
+		for (i=0;i<len;i++)
+		{
+			if(isalpha(str[i]))
+			{
+				find_in_map(chr,str[i]);
+			}
+		}
+		qsort(chr,max_row,sizeof(char),cmp);
+
+		for (i=0;i<len;i++)
+		{
+			row=find_in_map(chr,str[i]);
+			i+=2;
+
+			while (str[i]!=';'&&i<len)
+			{
+				col=find_in_map(chr,str[i]);
+				GAM[row][col]=GAM[col][row]=true;
+				i++;
+			}
+		}
+		int a[10];
+		for (i=0;i<max_row;i++)
+		{
+			a[0]=i;
+			dealwith(1,0,a);
+		}
+
+		for (i=0;i<max_row;i++)
+			printf("%c ",chr[result[i]]);
+		printf("-> %d\n",min_band);
+	}
+	return 0;
+}

@@ -1,0 +1,92 @@
+//这道题目经验是，对于图的剪枝可以考虑图的连通性
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <map>
+#include <cmath>
+#include <algorithm>
+#define MAXN 105
+#define INF 1e9
+using namespace std;
+int final_corner,GAM[MAXN][MAXN],result[1000][MAXN],result_num,num_of_result[1000],Father[MAXN];
+bool isvisited[MAXN];
+
+void dealwith(int cur,int *a)
+{
+	if(a[cur-1]==final_corner)
+	{
+		memcpy(result[result_num],a,sizeof(result[0]));
+		num_of_result[result_num++]=cur;
+		return;
+	}
+	int start=a[cur-1],i;
+	for (i=1;i<=GAM[start][0];i++)
+	{
+		int end=GAM[start][i];
+		if(!isvisited[end]&&Father[end]==1)
+		{
+			a[cur]=end;
+			isvisited[end]=true;
+			dealwith(cur+1,a);
+			isvisited[end]=false;
+			a[cur]=0;
+		}
+	}
+}
+
+int cmp(const void *a,const void *b)
+{
+	return *(int*)a-*(int*)b;
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,z,t_count=0,row,col,count;
+	int a[MAXN],que[1000],front,rear,temp;
+	freopen("input.txt","r",stdin);
+
+	while (scanf("%d",&final_corner)!=EOF)
+	{
+		memset(isvisited,0,sizeof(isvisited));
+		memset(GAM,0,sizeof(GAM));
+		memset(result,0,sizeof(result));
+		memset(Father,0,sizeof(Father));
+		result_num=0;
+		while (scanf("%d %d",&row,&col)!=EOF&&row!=0)
+		{
+			GAM[row][++GAM[row][0]]=col;
+			GAM[col][++GAM[col][0]]=row;
+		}
+		for (i=1;i<=21;i++)
+			qsort(&GAM[i][1],GAM[i][0],sizeof(GAM[i][0]),cmp);
+		Father[final_corner]=1;
+		front=rear=0;
+		que[rear++]=final_corner;
+		while (rear>front)
+		{
+			temp=que[front++];
+			for (i=1;i<=GAM[temp][0];i++)
+			{
+				if(Father[GAM[temp][i]]==0)
+				{
+					que[rear++]=GAM[temp][i];
+					Father[GAM[temp][i]]=1;
+				}
+			}
+		}
+
+		a[0]=1;
+		isvisited[1]=true;
+		dealwith(1,a);
+		printf("CASE %d:\n",++t_count);
+		for (i=0;i<result_num;i++)
+		{
+			for (j=0;j<num_of_result[i]-1;j++)
+				printf("%d ",result[i][j]);
+			printf("%d\n",result[i][j]);
+		}
+		printf("There are %d routes from the firestation to streetcorner %d.\n",result_num,final_corner);
+	}
+	return 0;
+}

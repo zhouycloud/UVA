@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <stack>
+#include <vector>
+#include <queue>
+#include <cmath>
+#define MAXN 1000
+using namespace std;
+bool isVisited[MAXN][MAXN];
+int start_pos[2],end_pos[2],length;
+
+int direction[8][2]={-1,-2,-1,2,1,-2,1,2,-2,-1,2,-1,-2,1,2,1};
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,t_count=1,count,max;
+	freopen("input.txt","r",stdin);
+	char temp_fir[20],temp_sec[20];
+	while (scanf("%s %s\n",temp_fir,temp_sec)!=EOF)
+	{
+		memset(isVisited,0,sizeof(isVisited));
+		start_pos[0]=temp_fir[0]-'a';
+		start_pos[1]=temp_fir[1]-'1';
+		end_pos[0]=temp_sec[0]-'a';
+		end_pos[1]=temp_sec[1]-'1';
+		length=0;
+
+		queue<int*> queue_s;
+		queue<int> queue_length;
+		queue_s.push(start_pos);
+		queue_length.push(0);
+
+		while (!queue_s.empty())
+		{
+			int *temp=queue_s.front();
+			length=queue_length.front();
+			queue_length.pop();
+			queue_s.pop();
+
+			isVisited[temp[0]][temp[1]]=true;
+			if(temp[0]==end_pos[0]&&temp[1]==end_pos[1])
+				break;
+
+			for (i=0;i<8;i++)
+			{
+				int *new_pos=new int[2];
+				new_pos[0]=temp[0]-direction[i][0];
+				new_pos[1]=temp[1]-direction[i][1];
+				if(new_pos[0]<0||new_pos[0]>=8||new_pos[1]<0||new_pos[1]>=8||isVisited[new_pos[0]][new_pos[1]])
+					continue;
+				else
+				{
+					queue_s.push(new_pos);
+					queue_length.push(length+1);
+				}
+			}
+		}
+		printf("To get from %s to %s takes %d knight moves.\n",temp_fir,temp_sec,length);
+	}	
+	
+	return 0;
+}

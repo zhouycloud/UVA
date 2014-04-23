@@ -1,0 +1,44 @@
+//Ë®Ìâ
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <stack>
+#define MAXN 200
+using namespace std;
+
+int parties[MAXN];
+
+int main(int argc, char* argv[])
+{
+	int n,i,j,k,m,temp,t,p;
+	freopen("input.txt","r",stdin);
+	int n_count=1;
+	scanf("%d",&t);
+	while (t--)
+	{
+		memset(parties,0,sizeof(parties));
+		scanf("%d",&n);
+		scanf("%d",&p);
+		for (i=0;i<p;i++)
+			scanf("%d",&parties[i]);
+		int count=0;
+		for (i=1;i<=n;i++)
+		{
+			if(i%7==6||i%7==0)
+				continue;
+			for (j=0;j<p;j++)
+			{
+				if(i%parties[j]==0)
+				{
+					count++;
+					break;
+				}
+			}
+		}
+		printf("%d\n",count);
+	}
+
+	return 0;
+}

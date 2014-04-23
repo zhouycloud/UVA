@@ -1,0 +1,70 @@
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 10000
+
+char str[MAXN],line2[MAXN];
+
+double GetDigitalNum( double U, char prefix ) 
+{
+	switch(prefix)
+	{
+		case 'm':	return U*0.001;
+		case 'M':	return U*1000000;
+		case 'k':	return U*1000;
+		default:	return U;
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int n,i,j,k;
+	double U,I,P;
+	scanf("%d\n",&n);
+	bool first=true;
+	for (i=1;i<=n;i++)
+	{
+		bool getU,getI,getP;
+		getU=getI=getP=false;
+
+		memset(str,0,sizeof(str));
+		fgets(str,MAXN,stdin);
+		str[strlen(str)-1]='\0';
+		
+		printf("Problem #%d\n",i);
+		for (j=0;j<strlen(str);j++)
+		{
+			if (str[j]=='=')
+			{
+				char prefix;
+				switch(str[j-1])
+				{
+					case 'U':	
+						getU=true;
+						sscanf(&str[j+1],"%lf%c",&U,&prefix);
+						U=GetDigitalNum(U,prefix);
+						break;
+					case 'I':	
+						getI=true;
+						sscanf(&str[j+1],"%lf%c",&I,&prefix);		
+						I=GetDigitalNum(I,prefix);
+						break;
+					case 'P':
+						getP=true;
+						sscanf(&str[j+1],"%lf%c",&P,&prefix);
+						P=GetDigitalNum(P,prefix);
+						break;
+				}
+			}
+		}
+		if(getI&&getP)	printf("U=%.2lf%c\n\n",P/I,'V');
+		if(getI&&getU)	printf("P=%.2lf%c\n\n",U*I,'W');
+		if(getP&&getU)	printf("I=%.2lf%c\n\n",P/U,'A');//最后这里字符串格式要特别注意，已经出了几次错误了
+	}
+	
+	return 0;
+}
+

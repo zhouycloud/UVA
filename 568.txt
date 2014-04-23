@@ -1,0 +1,47 @@
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define eps 1e-9
+#define MAXN 20000
+#define MAX_INT 999999999
+#define num_place 100000
+int num[MAXN],res[MAXN],count,count_res;
+double c[MAXN];
+char chr[MAXN];
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,j,num_base,last,sec_factor,n;
+	while(scanf("%d\n",&n)!=EOF)
+	{
+		if(n==0||n==1)
+		{
+			printf("%5d -> %d\n",n,1);
+			continue;
+		}
+		int sum=n;
+		last=1;
+		for(i=2;i<=sum;i++)
+		{
+			int mult_sum=last*i;
+			while(mult_sum%10==0)	
+			{
+				mult_sum/=10;
+			}
+			last=mult_sum%num_place;
+		}
+		while (last%10==0)
+		{
+			last/=10;
+		}
+		last%=10;
+		printf("%5d -> %d\n",n,last);
+	}
+
+	return 0;
+}
+
+

@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <stack>
+#define MAXN 300
+using namespace std;
+
+struct matrix
+{
+	char name;
+	int row;
+	int col;
+};
+
+int find(vector<matrix> m_vect,char name)
+{
+	int i;
+	for (i=0;i<m_vect.size();i++)
+	{
+		if (m_vect[i].name==name)
+			return i;
+	}
+	return -1;
+}
+
+bool calc(vector<matrix> m_vect,char* str,int &resu)
+{
+	stack<matrix> m_stack;
+	int len=strlen(str),i;
+	int multi_times=0;
+
+	if(len==1)
+	{
+		resu=0;
+		return true;
+	}
+
+	for (i=0;i<len;i++)
+	{
+		bool isPare=false;
+		while (str[i]=='(')
+		{
+			i++;
+			isPare=true;
+		}
+
+		if(str[i]==')')
+		{
+			if (m_stack.size()<2)
+				continue;
+			matrix sec=m_stack.top();
+			m_stack.pop();
+			matrix fir=m_stack.top();
+			m_stack.pop();
+
+			if(fir.col!=sec.row)
+				return false;
+			multi_times+=fir.row*fir.col*sec.col;
+			fir.col=sec.col;
+			m_stack.push(fir);
+			continue;
+		}
+		int place=find(m_vect,str[i]);
+		if(place!=-1)
+			m_stack.push(m_vect[place]);
+		else
+			return false;
+	}	
+	resu=multi_times;
+	return true;
+}
+
+int main(int argc, char* argv[])
+{
+	int n,i,j,k,m,num;
+	freopen("input.txt","r",stdin);
+	scanf("%d\n",&n);
+
+	vector<matrix>	m_vector;
+	char temp;
+
+	for(i=0;i<n;i++)
+	{
+		int row,col;
+		scanf("%c %d %d\n",&temp,&row,&col);
+
+		matrix m_temp;
+		m_temp.name=temp;
+		m_temp.row=row;
+		m_temp.col=col;
+		m_vector.push_back(m_temp);
+	}
+
+	char temp_str[1000];
+	int result;
+	while (scanf("%s",temp_str)!=EOF)
+	{
+		if(calc(m_vector,temp_str,result))	
+			printf("%d\n",result);
+		else
+			printf("error\n");
+	}
+	return 0;
+}

@@ -1,0 +1,99 @@
+//怎样把该题目转化为欧拉道路是个很有趣的想法，另外，所为欧拉回路，就是满足以下条件：
+//无向图是联通的，且最多只有两个奇点，则存在欧拉道路；如果所有结点的度都为偶数，那么则为欧拉回路
+//有向图联通，且最多只能有两个点的入度不等于出度，而且必须是其中一个点的出度恰好比入度大1，另一个相反，那么存在欧拉道路；如果每一个结点的入度等于出度，那么则为欧拉回路
+//注意循环中不能用break
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <cmath>
+#define MAXN 1001
+using namespace std;
+int DGAM[MAXN][MAXN],start_pos,end_pos,words_count;
+
+void euler(int start_pos)
+{
+	int i;
+	for (i=0;i<26;i++)
+	{
+		if(DGAM[start_pos][i]>0)
+		{
+			DGAM[start_pos][i]--;
+			euler(i);
+		}
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,t_count=1,n,edge_num,start_count,end_count;
+	freopen("input.txt","r",stdin);
+	
+	scanf("%d",&t_count);
+	while (t_count--)
+	{
+		start_pos=end_pos=start_count=end_count=0;
+		memset(DGAM,0,sizeof(DGAM));
+		scanf("%d",&words_count);
+		for (i=0;i<words_count;i++)
+		{
+			char temp[MAXN];
+			scanf("%s",temp);
+			int first=temp[0]-'a';
+			int sec=temp[strlen(temp)-1]-'a';
+			DGAM[first][sec]++;
+		}
+		bool exist_euler=true;
+		for (i=0;i<26;i++)
+		{
+			int out_degree,in_degree;
+			out_degree=in_degree=0;
+			for (j=0;j<26;j++)
+			{
+				if(DGAM[i][j]!=0)
+					out_degree+=DGAM[i][j];
+				if(DGAM[j][i]!=0)
+					in_degree+=DGAM[j][i];
+			}
+			if(out_degree==(in_degree+1))
+			{
+				start_pos=i;
+				start_count++;
+			}
+			else if(in_degree==(out_degree+1))
+			{
+				end_pos=i;
+				end_count++;
+			}
+			else if(out_degree!=in_degree)
+				exist_euler=false;
+		}
+		
+		if(exist_euler&&start_count==end_count)
+		{
+			if((start_count+end_count)==2)
+				euler(start_pos);
+			else if(start_count==0)
+				euler(start_pos);
+		}
+		else
+		{
+			printf("The door cannot be opened.\n");
+			continue;
+		}
+		for (i=0;i<26;i++)
+		{
+			for (j=0;j<26;j++)
+			{
+				if(DGAM[i][j]!=0)
+					exist_euler=false;
+			}
+		}
+		if(!exist_euler)
+			printf("The door cannot be opened.\n");
+		else
+			printf("Ordering is possible.\n");
+	}
+	return 0;
+}

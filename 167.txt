@@ -1,0 +1,133 @@
+//带权的八皇后问题
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <cmath>
+#include <algorithm>
+#define MAXN 1000
+#define INF 1e9
+using namespace std;
+int weights[8][8],max_num,padding_quene[8][8];
+
+void padding(int x,int y,int cur)
+{
+	int i;
+	for (i=0;i<8;i++)
+	{
+		if(padding_quene[x][i]==-1)
+			padding_quene[x][i]=cur;
+		if(padding_quene[i][y]==-1)
+			padding_quene[i][y]=cur;
+	}
+	
+	int cur_x,cur_y;
+	for(i=1;i<8;i++)
+	{
+		cur_x=-1*i+x;
+		cur_y=-1*i+y;
+		if(cur_x>=0&&cur_x<8&&cur_y>=0&&cur_y<8&&padding_quene[cur_x][cur_y]==-1)
+			padding_quene[cur_x][cur_y]=cur;
+
+		cur_x=i+x;
+		cur_y=-1*i+y;
+		if(cur_x>=0&&cur_x<8&&cur_y>=0&&cur_y<8&&padding_quene[cur_x][cur_y]==-1)
+			padding_quene[cur_x][cur_y]=cur;
+
+		cur_x=-1*i+x;
+		cur_y=i+y;
+		if(cur_x>=0&&cur_x<8&&cur_y>=0&&cur_y<8&&padding_quene[cur_x][cur_y]==-1)
+			padding_quene[cur_x][cur_y]=cur;
+
+		cur_x=i+x;
+		cur_y=i+y;
+		if(cur_x>=0&&cur_x<8&&cur_y>=0&&cur_y<8&&padding_quene[cur_x][cur_y]==-1)
+			padding_quene[cur_x][cur_y]=cur;
+	}
+	padding_quene[x][y]=2;
+}
+
+void unpadding(int x,int y,int cur)
+{
+	int i,j;
+	for (i=0;i<8;i++)
+	{
+		if(padding_quene[x][i]==cur)
+			padding_quene[x][i]=-1;
+		if(padding_quene[i][y]==cur)
+			padding_quene[i][y]=-1;
+	}
+
+	int cur_x,cur_y;
+	for(i=1;i<8;i++)
+	{
+		cur_x=-1*i+x;
+		cur_y=-1*i+y;
+		if(cur_x>=0&&cur_x<8&&cur_y>=0&&cur_y<8&&padding_quene[cur_x][cur_y]==cur)
+			padding_quene[cur_x][cur_y]=-1;
+
+		cur_x=i+x;
+		cur_y=-1*i+y;
+		if(cur_x>=0&&cur_x<8&&cur_y>=0&&cur_y<8&&padding_quene[cur_x][cur_y]==cur)
+			padding_quene[cur_x][cur_y]=-1;
+
+		cur_x=-1*i+x;
+		cur_y=i+y;
+		if(cur_x>=0&&cur_x<8&&cur_y>=0&&cur_y<8&&padding_quene[cur_x][cur_y]==cur)
+			padding_quene[cur_x][cur_y]=-1;
+
+		cur_x=i+x;
+		cur_y=i+y;
+		if(cur_x>=0&&cur_x<8&&cur_y>=0&&cur_y<8&&padding_quene[cur_x][cur_y]==cur)
+			padding_quene[cur_x][cur_y]=-1;
+	}
+	padding_quene[x][y]=-1;
+	for (i=0;i<8;i++)
+		for (j=0;j<8;j++)
+			if(padding_quene[i][j]==2)
+				padding(i,j,1);
+}
+
+void dealwith(int cur,int sum)
+{
+	int i,j;
+
+	if(cur==8)
+	{
+		if(sum>max_num)
+			max_num=sum;
+		return;
+	}
+
+	for (i=0;i<8;i++)
+	{
+		if(padding_quene[cur][i]==-1)
+		{
+			padding(cur,i,1);
+			dealwith(cur+1,sum+weights[cur][i]);
+			unpadding(cur,i,1);
+		}
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,z,t_count=0;
+	freopen("input.txt","r",stdin);
+	scanf("%d",&t_count);
+	while (t_count--)
+	{
+		max_num=0;
+		for (i=0;i<8;i++)
+			for(j=0;j<8;j++)
+				padding_quene[i][j]=-1;
+		for (i=0;i<8;i++)
+			for (j=0;j<8;j++)
+				scanf("%d",&weights[i][j]);
+		dealwith(0,0);
+		printf("%5d\n",max_num);
+	}
+	
+	return 0;
+}

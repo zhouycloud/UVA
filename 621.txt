@@ -1,0 +1,56 @@
+//理清楚题目是关键
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 3000
+
+char str[MAXN]="";
+
+void dealwith(char *words)
+{
+	int len=strlen(words),i,j,k;
+	if(strcmp(words,"1")==0||strcmp(words,"4")==0||strcmp(words,"78")==0)
+	{
+		printf("+\n");
+		return;
+	}
+	
+	if(words[len-1]=='5'&&words[len-2]=='3')
+	{
+		printf("-\n");
+		return;
+	}
+
+	if(words[0]=='9'&&words[len-1]=='4')
+	{
+		printf("*\n");
+		return;
+	}
+	if(strstr(words,"190")==words)
+	{
+		printf("?\n");
+		return;
+	}
+
+}
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,k,j,n;
+	memset(str,0,sizeof(str));
+	while(scanf("%d\n",&n)!=EOF)
+	{
+		for (i=0;i<n;i++)
+		{
+			scanf("%s\n",str);
+			dealwith(str);
+			memset(str,0,sizeof(str));
+		}
+
+	}
+	
+	return 0;
+}

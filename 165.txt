@@ -1,0 +1,86 @@
+//这道题目AC不易啊，有东西可以总结:
+这明显是一道题目有两个全排列的问题：
+1.选取哪些面值的邮票是需要全排列的，记得剪枝要充足
+2.计算这些面值的邮票能够组织的最大连续范围，需要全排列
+
+经验：做这种题目最好是先分析好，然后再敲代码
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <cmath>
+#include <algorithm>
+#define MAXN 1000
+#define INF 1e9
+using namespace std;
+int h,k,num_chain[MAXN],max_num,result[MAXN];
+bool nums[MAXN],nums_cpy[MAXN];
+
+void compute(int n,int cur,int sum,int *a)//n表示已经选入几个数，cur表示正在向其中邮票填入第几个数，sum表示前面几个数字的和
+{
+	int i,j;
+	if(cur==h)
+		return;
+
+	for (i=0;i<n;i++)
+	{
+		nums[sum+a[i]]=true;
+		compute(n,cur+1,sum+a[i],a);
+	}
+}
+
+void dealwith(int cur,int a[])//cur表示正在向num_chain填入第cur个数，a表示填入数字的集合
+{
+	int i,j,padding_num,max_num_inner;
+	if(cur==k)
+	{
+		int sum=0;
+		memset(nums,0,sizeof(nums));
+		compute(cur,0,0,a);
+		for (i=1;i<MAXN&&nums[i];i++);
+		sum=i-1;
+
+		if(sum>max_num)
+		{
+			max_num=sum;
+			memcpy(result,a,sizeof(result));
+		}
+		return;
+	}
+
+	memset(nums,0,sizeof(nums));
+	compute(cur,0,0,a);
+	for (i=1;i<MAXN&&nums[i];i++);
+	max_num_inner=i;
+
+	for (i=a[cur-1]+1;i<=max_num_inner;i++)//这里剪枝不能太粗糙，否则会造成时间成倍的增加，而且也不可能产生wa
+	{
+		a[cur]=i;
+		dealwith(cur+1,a);
+	}
+	
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,z,t_count=0;
+	freopen("input.txt","r",stdin);
+	while (scanf("%d %d",&h,&k)!=EOF&&h+k)
+	{
+		max_num=0;
+		memset(nums,0,sizeof(nums));
+		memset(result,0,sizeof(result));
+		nums[1]=true;
+		num_chain[0]=1;
+		int a[MAXN];
+		a[0]=1;
+		dealwith(1,a);
+		for (i=0;i<k;i++)
+			printf("%3d",result[i]);
+		printf(" ->%3d\n",max_num);
+	}
+	
+	return 0;
+}

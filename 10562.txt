@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <stack>
+#include <vector>
+#include <queue>
+#include <cmath>
+#define MAXN 100000
+using namespace std;
+
+char str1[500][500];
+int tree_count;
+struct node
+{
+	char ch;
+	int child_start,child_end,row_pos,col_pos,child_count;
+	int child[500];
+}tree[MAXN];
+
+void bfs(int n_line)
+{
+	int i,j;
+	for (i=0;i<n_line;i=i+3)
+	{
+		int curr_length=strlen(str1[i]);
+		if(i!=n_line-1)
+		{
+			int third_line_length=strlen(str1[i+2]),third_line_cursor=0;
+			for (j=0;j<curr_length;j++)
+			{
+				if(str1[i][j]==' ')
+					continue;
+				tree[tree_count].ch=str1[i][j];
+				if(str1[i+1][j]=='|')
+				{
+					third_line_cursor=j;
+					while (str1[i+2][third_line_cursor]=='-'&&third_line_cursor>=0)
+						third_line_cursor--;
+					tree[tree_count].child_start=third_line_cursor+1;
+					third_line_cursor=j;
+					while (str1[i+2][third_line_cursor]=='-'&&third_line_cursor<third_line_length&&third_line_cursor<strlen(str1[i+3]))
+						third_line_cursor++;
+					tree[tree_count].child_end=third_line_cursor-1;
+					tree[tree_count].child_count=0;
+				}
+				else
+					tree[tree_count].child_count=-1;
+				tree[tree_count].row_pos=i;
+				tree[tree_count].col_pos=j;
+				tree_count++;
+			}
+		}
+		else
+		{
+			for (j=0;j<curr_length;j++)
+			{
+				if(str1[i][j]==' ')
+					continue;
+				tree[tree_count].ch=str1[i][j];
+				tree[tree_count].child_count=-1;
+				tree[tree_count].row_pos=i;
+				tree[tree_count].col_pos=j;
+				tree_count++;
+			}
+		}
+	}
+
+	for (i=tree_count-1;i>=1;i--)
+	{
+		for (j=i-1;j>=0;j--)
+		{
+			if(tree[j].child_count==-1)
+				continue;
+			if(tree[j].row_pos==tree[i].row_pos-3)
+			{
+				if(tree[j].child_start<=tree[i].col_pos&&tree[j].child_end>=tree[i].col_pos)
+				{
+					tree[j].child[tree[j].child_count++]=i;
+					break;
+				}
+			}
+		}
+	}
+}
+
+void dfs(int index)
+{
+	int i;
+	printf("%c(",tree[index].ch);
+	if(tree[index].child_count!=0&&tree[index].child_count!=-1)
+	{
+		for (i=tree[index].child_count-1;i>=0;i--)
+			dfs(tree[index].child[i]);
+	}
+	printf(")");
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,t_count=0;
+	freopen("input.txt","r",stdin);
+	scanf("%d",&t_count);
+	getchar();
+	while (t_count--)
+	{
+		memset(str1,0,sizeof(str1));
+		memset(tree,0,sizeof(tree));
+		int n_line=0;
+		tree_count=0;
+		while (true)
+		{
+			gets(str1[n_line]);
+			if(strcmp(str1[n_line],"#")==0)
+				break;
+			n_line++;
+		}
+		if(n_line==0)
+		{
+			printf("()\n");
+			continue;
+		}
+		bfs(n_line);
+		printf("(");
+		dfs(0);
+		printf(")\n");
+	}
+	return 0;
+}

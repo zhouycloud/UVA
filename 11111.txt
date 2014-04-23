@@ -1,0 +1,97 @@
+//UVA上面没有AC，我已不知道为什么，在poj上面AC了，但是AC得很诡异,困扰我很久的问题，居然就是下面注释那一段代码导致读入出现错误了，我了个去
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <stack>
+#define MAXN 1000010
+using namespace std;
+
+int sum[MAXN];
+int integer[MAXN];
+
+int main(int argc, char* argv[])
+{
+	int n,i,j,k,m,num,temp;
+	freopen("input.txt","r",stdin);
+	while (true)
+	{
+		stack<int> m_stack;
+		stack<int> m_num;
+		memset(sum,0,sizeof(sum));
+		memset(integer,0,sizeof(integer));
+		while (!m_stack.empty())
+			m_stack.pop();
+		while (!m_num.empty())
+			m_num.pop();
+		num=0;
+		char c;
+		if(scanf("%d%c",&integer[num++],&c)==EOF)
+			break;
+		
+//注释掉这段话就不能AC了，这段话注释掉了，意味着下面这个while循环将会读入//下一个行的数据
+//		if(c=='\n')
+//		{
+//			printf(":-( Try again.\n");
+//			continue;
+//		}
+		while (scanf("%d%c",&integer[num++],&c)!=EOF)
+			if(c=='\n')	break;
+
+		if(num%2==1)
+		{
+			printf(":-( Try again.\n");
+			continue;
+		}
+
+		bool isM=true;
+
+		for (i=0;i<num;i++)
+		{
+			if(integer[i]>0)
+			{
+				if(m_num.empty())
+				{
+					isM=false;
+					break;
+				}
+				m_stack.pop();
+				if((integer[i]+m_num.top()!=0))
+				{
+					isM=false;
+					break;
+				}
+				m_num.pop();
+			}
+			else
+			{
+				if(!m_stack.empty())
+				{
+					int t=m_stack.top();
+					m_stack.pop();
+					t-=integer[i];
+					if(t>=0)
+					{
+						isM=false;
+						break;
+					}
+					m_stack.push(t);
+				}
+				m_stack.push(integer[i]);
+				m_num.push(integer[i]);
+			}
+		}
+		if(!m_stack.empty())
+		{
+			printf(":-( Try again.\n");
+			continue;
+		}
+		if(isM)
+			printf(":-) Matrioshka!\n");
+		else
+			printf(":-( Try again.\n");
+	}
+
+	return 0;
+}

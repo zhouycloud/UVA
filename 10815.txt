@@ -1,0 +1,55 @@
+//该道题不能用scanf进行输入，只能用getchar不知道为什么
+
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 5000010
+
+char sentence[MAXN],dic[MAXN][210];
+char str[MAXN];
+
+int str_cmp(const void* str1,const void* str2)
+{
+	char *a=(char*)str1;
+	char *b=(char*)str2;
+	return strcmp(a,b);
+}
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	memset(dic,'\0',sizeof(dic));
+	int num=0,i,j,k,length=0;
+	char chr;
+	memset(str,0,sizeof(str));
+	while((chr=getchar())!=EOF)
+	{
+		if(isalpha(chr))
+			dic[num][length++]=tolower(chr);
+		else
+		{
+			dic[num++][length]='\0';
+			length=0;
+		}
+	}
+
+	qsort(dic,num,sizeof(dic[0]),str_cmp);
+
+	for(i=0;i<num;i++)
+		if(strcmp("",dic[i])!=0)
+			break;
+
+	for (;i<num;i++)
+	{
+		if(i!=0&&strcmp(dic[i-1],dic[i])==0)
+			continue;
+		else
+		{
+			printf("%s\n",dic[i]);
+		}
+	}
+	return 0;
+}
+

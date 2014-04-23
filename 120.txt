@@ -1,0 +1,79 @@
+//边界条件要控制好
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 5000
+
+int num[MAXN];
+
+void rever(int num[],int count)
+{
+	int i;
+	for (i=0;i<=count/2;i++)
+	{
+		int temp=num[i];
+		num[i]=num[count-i];
+		num[count-i]=temp;
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,j,n,k,h;
+	memset(num,0,sizeof(num));
+	while(scanf("%d",&num[0])!=EOF)
+	{
+		int count=1;
+		if(getchar()=='\n')
+		{
+			printf("%d\n",num[0]);
+			printf("0\n");
+			continue;
+		}
+		while(scanf("%d",&num[count++]))
+		{
+			char t=getchar();
+			if(t=='\n')
+				break;
+		}
+
+		for (i=0;i<count;i++)
+		{
+			if(i==0)
+				printf("%d",num[i]);
+			else
+				printf(" %d",num[i]);
+		}
+
+		printf("\n");
+		int serial[MAXN];
+		memset(serial,0,sizeof(serial));
+		for (i=count-1;i>=0;i--)
+		{
+			int maxplace=0;
+			for (j=0;j<=i;j++)
+			{
+				if(num[j]>num[maxplace])
+					maxplace=j;
+			}
+			if(maxplace==i)
+				continue;
+			if(maxplace!=0)
+			{
+				printf("%d ",count-maxplace);
+				rever(num,maxplace);
+			}
+			printf("%d ",count-i);
+			rever(num,i);
+		}
+		printf("0\n");
+	}
+
+	return 0;
+}
+
+
+

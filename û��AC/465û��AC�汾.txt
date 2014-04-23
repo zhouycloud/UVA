@@ -1,0 +1,197 @@
+//multi必须要逆序字符串数组
+
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 10000
+
+char num1[MAXN]="",num2[MAXN]="",result[MAXN]="";
+char maxint[MAXN]="2147483647";
+
+int max(int i,int j)
+{
+	if(i>=j)	return i;
+	return j;
+}
+
+void reverse(char *s)
+{
+	int i;
+	for (i=0;i<strlen(s)/2;i++)
+	{
+		char temp=s[i];
+		s[i]=s[strlen(s)-1-i];
+		s[strlen(s)-1-i]=temp;
+	}
+}
+
+void multi(char*x,char*y,char *res)
+{
+	int i,j,k;
+	int m=strlen(y);
+	int n=strlen(x);
+	for(j=0;j<m;j++)
+	{
+		int t=0,g=0,num2=y[j]-'0',sum_num=0;
+		for (i=0;i<n||g!=0;i++)
+		{
+			int result=0,num1=0;
+			if(i<n)	num1=x[i]-'0';
+			if((i+j)<strlen(res))	sum_num=res[i+j]-'0';
+
+			t=g+num2*num1+sum_num;
+			g=t/10;
+			res[i+j]=t%10+'0';
+			t=0;
+			sum_num=0;
+		}
+		res[i+j]='\0';
+	}
+}
+
+void add(char *x,char *y,char *result)
+{
+	int m=strlen(x);
+	int n=strlen(y);
+	int i,j,g=0;
+	for (i=0;i<max(m,n)||g!=0;i++)
+	{
+		int n1,n2,t;
+		t=n1=n2=0;
+		if(i<m)	n1=x[i]-'0';
+		if(i<n)	n2=y[i]-'0';
+		t=g+n1+n2;
+		g=t/10;
+		result[i]=t%10+'0';
+	}
+	result[i]='\0';
+}
+
+bool toolarge( char *str ) 
+{
+	char temp[MAXN];
+	strcpy(temp,str);
+	int leng=strlen(temp);
+	if(leng>9)
+		return true;
+	int i;
+	for(i=leng;i<=9;i++)
+		temp[i]='0';
+	reverse(temp);
+	if(strcmp(maxint,str)<0)	return true;
+	return false;
+}
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	char oper;
+	memset(num1,0,sizeof(num1));
+	memset(num2,0,sizeof(num2));
+	memset(result,0,sizeof(result));
+	int i;
+
+	char str[MAXN]="";
+	while(fgets(str,MAXN,stdin))
+	{
+		str[strlen(str)-1]='\0';
+		for (i=0;i<strlen(str);i++)
+		{
+			if(!isdigit(str[i]))
+				break;
+			num1[i]=str[i];
+		}
+		num1[i]='\0';
+
+		for (;i<strlen(str);i++)
+		{
+			if(str[i]=='*'||str[i]=='+')
+			{
+					oper=str[i];
+					break;
+			}
+		}
+
+		while(!isdigit(str[i]))	i++;
+		int k=0;
+		for (;i<strlen(str);i++)
+		{
+			num2[k++]=str[i];
+		}
+		num2[k]='\0';
+
+		reverse(num1);
+		reverse(num2);
+
+
+		if(oper=='*')
+		{
+			multi(num1,num2,result);
+
+			reverse(num1);
+			reverse(num2);
+			reverse(result);
+
+			bool isZero=true;
+			for(i=0;i<strlen(result);i++)
+			{
+				if(result[i]!='0')	
+				{
+						isZero=true;
+						break;
+				}
+			}
+
+			if(isZero)
+			{
+				memset(result,0,sizeof(result));
+				result[0]='0';
+				result[1]='\0';
+			}
+
+			printf("%s %c %s\n",num1,oper,num2);
+			if(toolarge(num1))	printf("first number too big\n");
+			if(toolarge(num2))	printf("second number too big\n");
+			if(toolarge(result))	printf("result too big\n");
+		}
+		else
+		{
+			add(num1,num2,result);
+
+			bool isZero=true;
+			for(i=0;i<strlen(result);i++)
+			{
+				if(result[i]!='0')	
+				{
+					isZero=true;
+					break;
+				}
+			}
+
+			if(isZero)
+			{
+				memset(result,0,sizeof(result));
+				result[0]='0';
+				result[1]='\0';
+			}
+
+			reverse(num1);
+			reverse(num2);
+			reverse(result);
+			printf("%s\n",str);
+			if(toolarge(num1))	printf("first number too big\n");
+			if(toolarge(num2))	printf("second number too big\n");
+			if(toolarge(result))	printf("result too big\n");
+		}
+
+		memset(num1,0,sizeof(num1));
+		memset(num2,0,sizeof(num2));
+		memset(result,0,sizeof(result));
+	}
+	return 0;
+}
+
+
+

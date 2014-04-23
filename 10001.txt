@@ -1,0 +1,78 @@
+//那几个判断条件不好搞啊，要好好审题
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <cmath>
+#include <algorithm>
+#define MAXN 100
+#define INF 1e9
+using namespace std;
+int identifier,n;
+char front_back[8][3]={'0','0','0','0','0','1','0','1','0','0','1','1','1','0','0','1','0','1','1','1','0','1','1','1'};
+char str[MAXN],str_extra[MAXN];
+bool flag;
+
+void dealwith(int cur,char *str_input)
+{
+	int i;
+	if(flag)
+		return;
+	if(cur==n)
+	{
+		flag=true;
+		return;
+	}
+	for (i=0;i<8;i++)
+	{
+		if(flag)
+			return;
+		if((identifier&(1<<i))&&str[cur]=='1'||(!(identifier&(1<<i))&&str[cur]=='0'))
+		{
+			if(front_back[i][0]==str_input[cur-1]&&front_back[i][1]==str_input[cur])
+			{
+				if(cur<n-2)
+				{
+					str_input[(cur+1)]=front_back[i][2];
+					dealwith(cur+1,str_input);
+				}
+				else if(cur==(n-2)&&front_back[i][2]==str_input[cur+1])
+					dealwith(cur+1,str_input);
+				else if(cur==(n-1)&&front_back[i][2]==str_input[0])
+					dealwith(cur+1,str_input);
+			}
+		}
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,z,t_count=0;
+	freopen("input.txt","r",stdin);
+	while (scanf("%d %d %s",&identifier,&n,str)!=EOF)
+	{
+		flag=false;
+		for (i=0;i<8;i++)
+		{
+			for (j=0;j<n;j++)	str_extra[j]='*';
+
+			if((identifier&(1<<i))&&str[0]=='1'||!(identifier&(1<<i))&&str[0]=='0')
+			{
+				str_extra[0]=front_back[i][1];
+				str_extra[1]=front_back[i][2];
+				str_extra[n-1]=front_back[i][0];
+				dealwith(1,str_extra);
+			}
+			if(flag)
+				break;
+		}
+
+		if(flag)
+			printf("REACHABLE\n");
+		else
+			printf("GARDEN OF EDEN\n");
+	}
+	
+	return 0;
+}

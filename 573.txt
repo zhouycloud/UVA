@@ -1,0 +1,58 @@
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 3000
+#define eps 1e-9
+
+char str[MAXN]="";
+
+void calc(int h,int u,int d,int f)
+{
+	double H,U,D,F;
+	H=h;
+	U=u;
+	D=d;
+	F=f;
+	double distance=0,decrease_dist=f*U/100,climb_dist=u;
+	int days=1;
+	bool isFailure=false;
+	while(true)
+	{
+		if(climb_dist<0)
+			climb_dist=climb_dist+2*(decrease_dist);
+		else
+			distance+=climb_dist;
+		if(distance>H)
+			break;
+		distance-=D;
+		if(distance<0)
+		{
+			isFailure=true;
+			break;
+		}
+		climb_dist-=decrease_dist;
+		days++;
+	}
+	if(isFailure)	printf("failure on day %d\n",days);
+	else	printf("success on day %d\n",days);
+}
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,j,h,u,d,f;
+	while(scanf("%d %d %d %d\n",&h,&u,&d,&f)!=EOF)
+	{
+		if(h==0)
+			break;
+		calc(h,u,d,f);
+		
+	}
+	
+	return 0;
+}
+
+
+

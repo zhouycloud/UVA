@@ -1,0 +1,132 @@
+//有些状态题目是可以用隐式图来解决的，值得学习
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <map>
+#include <cmath>
+#include <algorithm>
+#include <queue>
+#define MAXN 201
+#define INF 1e9
+using namespace std;
+int jug[3],d,res;
+int node_status[MAXN][MAXN][MAXN];
+struct node
+{
+	int jug[3],least;
+};
+
+void bfs()
+{
+	int i,j,k;
+	bool isOk;
+	queue<node> que;
+	node root,front;
+	root.jug[0]=0;
+	root.jug[1]=0;
+	root.jug[2]=jug[2];
+	root.least=0;
+	que.push(root);
+	node_status[0][0][jug[2]]=0;
+
+	while (!que.empty())
+	{
+		front=que.front();
+		que.pop();
+		isOk=false;
+		for (i=0;i<3;i++)
+		{
+			if(front.jug[i]==d)
+			{
+				isOk=true;
+				if(front.least<res)
+					res=front.least;
+				break;
+			}
+		}
+		if(isOk)
+			continue;
+		for (i=0;i<3;i++)
+		{
+			for (j=0;j<3;j++)
+			{
+				if(i==j)
+					continue;
+				node temp;
+				for (k=0;k<3;k++)
+				{
+					temp.jug[k]=front.jug[k];
+				}
+
+				temp.jug[j]=front.jug[i]+front.jug[j];
+				int pour;
+				if(temp.jug[j]>jug[j])
+				{
+					temp.jug[i]=temp.jug[j]-jug[j];
+					temp.jug[j]=jug[j];
+					pour=temp.jug[j]-front.jug[j];
+				}
+				else
+				{
+					temp.jug[i]=0;
+					pour=front.jug[i];
+				}
+				temp.least=front.least+pour;
+				
+				if(node_status[temp.jug[0]][temp.jug[1]][temp.jug[2]]!=-1)
+				{
+					if(node_status[temp.jug[0]][temp.jug[1]][temp.jug[2]]>temp.least)
+						node_status[temp.jug[0]][temp.jug[1]][temp.jug[2]]=temp.least;
+				}
+				else
+				{
+					que.push(temp);
+					node_status[temp.jug[0]][temp.jug[1]][temp.jug[2]]=temp.least;
+				}
+			}
+		}
+	}
+
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,z,t_count=0,row,col,count;
+	int a[MAXN],que[1000],front,rear,temp;
+	freopen("input.txt","r",stdin);
+	scanf("%d",&t_count);
+	while (t_count--)
+	{
+		for (i=0;i<MAXN;i++)
+		{
+			for (j=0;j<MAXN;j++)
+			{
+				for (z=0;z<MAXN;z++)
+				{
+					node_status[i][j][z]=-1;
+				}
+			}
+		}
+		scanf("%d %d %d %d",jug,&jug[1],&jug[2],&d);
+		res=INF;
+		bfs();
+		if(res!=INF)
+			printf("%d %d\n",res,d);
+		else
+		{
+			while (--d)
+			{
+				bfs();
+				if(res!=INF)
+				{
+					printf("%d %d\n",res,d);
+					break;
+				}
+			}
+		}
+	}
+
+	return 0;
+}

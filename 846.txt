@@ -1,0 +1,61 @@
+//这道题的精髓在于从两边向中间，并且注意2种特殊情况
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 3000
+#define eps 1e-9
+
+char str[MAXN]="";
+
+void calc(int fir,int sec)
+{
+	int i,j,k,tot=sec-fir,sum=0,step=0,mid,num=0;
+	if(tot%2==1)
+		mid=tot/2+1;
+	else
+		mid=tot/2;
+	if(tot==3||tot==4)
+	{
+		printf("3\n");
+		return;
+	}
+	while(sum<mid)
+	{
+		step++;
+		num++;
+		sum+=step;
+	}
+	int max_step=step;
+	step=0;
+	
+	while(sum<tot)
+	{
+		if(step<=max_step-1&&(sum+step)<tot)
+			step++;
+		num++;
+		sum+=step;
+
+	}
+	printf("%d\n",num);
+}
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,j,n,fir,sec;
+	while(scanf("%d\n",&n)!=EOF)
+	{
+		for(i=0;i<n;i++)
+		{
+			scanf("%d %d\n",&fir,&sec);
+			calc(fir,sec);
+		}
+	}
+	
+	return 0;
+}
+
+
+

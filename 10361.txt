@@ -1,0 +1,81 @@
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 10000
+
+char line1[MAXN],line2[MAXN];
+
+int main(int argc, char* argv[])
+{
+	int count,i,j;
+	char s2[200],s3[200],s4[200],s5[200];
+	scanf("%d\n",&count);
+
+	while(count--)
+	{
+		fgets(line1,MAXN,stdin);
+		line1[strlen(line1)-1]='\0';
+		fgets(line2,MAXN,stdin);
+		line2[strlen(line2)-1]='\0';
+		line2[strlen(line2)-1]='\0';
+		line2[strlen(line2)-1]='\0';
+		line2[strlen(line2)-1]='\0';
+		char temp[200];
+		memset(temp,0,sizeof(temp));
+		memcpy(temp,line1,sizeof(char)*strlen(line1));
+		temp[strlen(line1)]='\0';
+		for (i=0;i<strlen(temp);i++)
+			if(temp[i]!='<'&&temp[i]!='>')	printf("%c",temp[i]);
+		printf("\n");
+
+
+		memset(s2,0,sizeof(s2));
+		memset(s3,0,sizeof(s3));
+		memset(s4,0,sizeof(s4));
+		memset(s5,0,sizeof(s5));
+
+		int t2,t3,t4,t5;
+		bool flag=false;
+		for (i=0,t2=0;i<strlen(line1);i++)
+		{
+			if(line1[i]=='<')
+			{
+				i++;
+				flag=true;
+			}
+			if(line1[i]=='>')
+				break;
+			if(flag)
+				s2[t2++]=line1[i];
+		}
+		for (t3=0,i=i+1;i<strlen(line1);i++)
+		{
+			if(line1[i]=='<')
+			{
+				i++;
+				break;
+			}
+			s3[t3++]=line1[i];
+		}
+		for (t4=0;i<strlen(line1);i++)
+		{
+			if(line1[i]=='>')
+			{
+				++i;
+				break;
+			}
+			s4[t4++]=line1[i];
+		}
+		for (t5=0;i<strlen(line1);i++)
+		{
+			s5[t5++]=line1[i];
+		}
+		s2[t2]=s3[t3]=s4[t4]=s5[t5]='\0';
+		printf("%s%s%s%s%s\n",line2,s4,s3,s2,s5);
+	}
+	
+	return 0;
+}
+

@@ -1,0 +1,67 @@
+//大水题，不知道怎么难度还比297高
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <stack>
+#include <vector>
+#include <queue>
+#include <cmath>
+#define MAXN 20005
+using namespace std;
+
+char str1[MAXN],str2[MAXN];
+int entry[MAXN],leaf[MAXN];
+
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,temp,n,count,t_count=0;
+	freopen("input.txt","r",stdin);
+	char str[1000][1000];
+	while (scanf("%d\n",&n))
+	{
+		memset(str1,0,sizeof(str1));
+		memset(entry,0,sizeof(entry));
+		memset(leaf,0,sizeof(leaf));
+		memset(str,0,sizeof(str));
+		if(n==0)
+			break;
+		for(i=0;i<n;i++)
+		{
+			scanf("%s",str[i]);
+			sscanf(str[i],"x%d",entry+i);
+		}
+		getchar();
+		int leaf_num=pow(2.0,n);
+		for (i=0;i<leaf_num;i++)
+		{
+			char t=getchar();
+			leaf[i]=t-'0';
+		}
+		scanf("%d\n",&count);
+		printf("S-Tree #%d:\n",++t_count);
+		while (count--)
+		{
+			int vva[1000];
+			for (i=0;i<n;i++)
+			{
+				char t=getchar();
+				vva[i]=t-'0';
+			}
+			getchar();
+			int sum=0;
+			int addition_num=leaf_num;
+			for (i=0;i<n;i++)
+			{
+				addition_num/=2;
+				if(vva[entry[i]-1]==1)
+					sum=sum+addition_num;
+			}
+			printf("%d",leaf[sum]);
+		}
+		printf("\n\n");
+	}
+
+	return 0;
+}

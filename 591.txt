@@ -1,0 +1,49 @@
+//题目很简单，注意最后要有一个空行就行
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 3000
+
+char str[MAXN]="";
+
+void calc(int num)
+{
+	int i,j,k,temp[MAXN],sum=0,ave=0,move=0;
+	memset(temp,0,sizeof(temp));
+
+	for (i=0;i<num;i++)
+	{
+		scanf("%d",&temp[i]);
+		sum+=temp[i];
+	}
+	ave=sum/num;
+	for (i=0;i<num;i++)
+	{
+		if(temp[i]>ave)
+			move+=(temp[i]-ave);
+	}
+	printf("The minimum number of moves is %d.\n",move);
+}
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,k,j,n,num,count=1;
+	while(scanf("%d\n",&n)!=EOF)
+	{
+		if(n==0)
+			break;
+		printf("Set #%d\n",count++);
+
+		calc(n);
+		printf("\n");
+		
+	}
+	
+	return 0;
+}
+
+
+

@@ -1,0 +1,95 @@
+//这道题实际上就是6个方向，上下左右前后，的bfs而已，但是对于上下而言，不能采用递归，因为递归会爆栈（4字节指针*200000>=2MB,所以会爆栈）。另外，队列大小要大于200000，
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <cmath>
+#define MAXN 200	//这个太大了，居然会导致无法启动应用，与下面的数组有关
+using namespace std;
+bool isVisited[MAXN][MAXN][MAXN],isEscaped;
+char maze[MAXN][MAXN][MAXN];
+int L,R,C;
+int start_l,start_x,start_y,least_time;
+
+int direction[6][3]={-1,0,0,1,0,0,0,1,0,0,-1,0,0,0,1,0,0,-1};
+
+struct node 
+{
+	int l,x,y,least_time;
+};
+
+void bfs(node *start)
+{
+	int i,front,rear;
+	front=rear=0;
+	node* que[200000];
+	que[rear++]=start;
+	while (front<rear)
+	{
+		node *temp=que[front++];
+		if(maze[temp->l][temp->x][temp->y]=='E')
+		{
+			least_time=temp->least_time;
+			isEscaped=true;
+		}
+		
+		for (i=0;i<6;i++)
+		{
+			node *t=new node;
+			t->l=temp->l+direction[i][2];
+			t->least_time=temp->least_time+1;
+			t->x=temp->x+direction[i][0];
+			t->y=temp->y+direction[i][1];
+			if(t->x<0||t->y<0||t->x>=R||t->y>=C||t->l<0||t->l>=L||isVisited[t->l][t->x][t->y]||maze[t->l][t->x][t->y]=='#')
+				continue;
+			isVisited[t->l][t->x][t->y]=true;
+
+			que[rear++]=t;
+		}
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,t_count=1,count,max;
+	freopen("input.txt","r",stdin);
+	while(scanf("%d %d %d\n",&L,&R,&C)!=EOF)
+	{
+		memset(maze,0,sizeof(maze));
+		memset(isVisited,0,sizeof(isVisited));
+		least_time=0;
+		isEscaped=false;
+		if(L==0&&R==0&&C==0)
+			break;
+		for (i=0;i<L;i++)
+		{
+			for (j=0;j<R;j++)
+			{
+				scanf("%s",maze[i][j]);
+				for (k=0;k<C;k++)
+				{
+					if(maze[i][j][k]=='S')
+					{
+						start_l=i;
+						start_x=j;
+						start_y=k;
+					}
+				}
+			}
+		}
+
+		node n;
+		n.l=start_l;
+		n.x=start_x;
+		n.y=start_y;
+		n.least_time=0;
+		bfs(&n);
+		if(isEscaped)
+			printf("Escaped in %d minute(s).\n",least_time);
+		else
+			printf("Trapped!\n");
+	}
+
+	return 0;
+}

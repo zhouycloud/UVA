@@ -1,0 +1,67 @@
+//简单题，一样的进行遍历
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <cmath>
+#include <algorithm>
+#define MAXN 100
+#define INF 999999
+#define PLUS_CONSTANT 500
+using namespace std;
+int GAM[MAXN][MAXN];
+int cnt,n,m;
+
+void dealwith(int x,int y,int num)
+{
+	int i,j;
+	if(num>cnt)
+		cnt=num;
+	for (i=0;i<n;i++)
+	{
+		if(GAM[y][i]>0)
+		{
+			GAM[y][i]--;
+			GAM[i][y]--;
+			dealwith(y,i,num+1);
+			GAM[y][i]++;
+			GAM[i][y]++;
+		}
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,t_count=0,fir,sec;
+	freopen("input.txt","r",stdin);
+
+	while (scanf("%d %d",&n,&m)!=EOF&&n!=0)
+	{
+		memset(GAM,0,sizeof(GAM));
+		cnt=0;
+		for (i=0;i<m;i++)
+		{
+			scanf("%d %d",&fir,&sec);
+			GAM[fir][sec]++;
+			GAM[sec][fir]++;
+		}
+		for (i=0;i<n;i++)
+		{
+			for (j=0;j<n;j++)
+			{
+				if(GAM[i][j]>0)
+				{
+					GAM[i][j]--;
+					GAM[j][i]--;
+					dealwith(i,j,1);
+					GAM[i][j]++;
+					GAM[j][i]++;
+				}
+			}
+		}
+		printf("%d\n",cnt);
+	}
+
+	return 0;
+}

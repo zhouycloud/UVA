@@ -1,0 +1,37 @@
+//这道题目不错，要用脑子思考啊
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define eps 1e-9
+#define MAXN 20000
+#define MAX_INT 999999999
+
+int num[MAXN],res[MAXN],count,count_res;
+double c[MAXN];
+char chr[MAXN];
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,j,num_base,last,sec_factor;
+	while(scanf("%d %d %d\n",&num_base,&last,&sec_factor)!=EOF)
+	{
+		int g=0,next=last,n=0;
+		while(true)
+		{
+			n++;
+			int sum=next*sec_factor+g;
+			if(sum==last)
+				break;
+			g=sum/num_base;
+			next=sum%num_base;
+		}
+		printf("%d\n",n);
+	}
+
+	return 0;
+}
+
+

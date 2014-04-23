@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <stack>
+#define MAXN 300
+using namespace std;
+
+int dole[100];
+string former[MAXN],reorder[MAXN];
+stack<char> str_stack;
+
+bool calc(char *str)
+{
+	int len=strlen(str),i;
+	stack<char> pare;
+	for (i=0;i<len;i++)
+	{
+		if(str[i]=='('||str[i]=='[')
+			pare.push(str[i]);
+		else
+		{
+			if(pare.size()==0)
+				return false;
+			char t=pare.top();
+			pare.pop();
+			if(t=='('&&str[i]!=')')
+				return false;
+			if(t=='['&&str[i]!=']')
+				return false;
+		}
+	}
+	if(pare.size()!=0)
+		return false;
+	return true;
+}
+
+int main(int argc, char* argv[])
+{
+	int n,i,j,k,m,num;
+	freopen("input.txt","r",stdin);
+	scanf("%d\n",&n);
+	for(i=0;i<n;i++)
+	{
+		char temp[200];
+		memset(temp,0,sizeof(temp));
+		fgets(temp,200,stdin);
+		temp[strlen(temp)-1]='\0';
+		if(calc(temp))
+			printf("Yes\n");
+		else
+			printf("No\n");
+	}
+	return 0;
+}

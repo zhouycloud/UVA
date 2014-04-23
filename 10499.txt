@@ -1,0 +1,31 @@
+//大水题,唯一一个知识点，用int会溢出，然而，double不会
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 3000
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,j,fir,sec;
+	int n;
+	while(scanf("%d\n",&n)!=EOF)
+	{
+		if(n<0)
+			break;
+		if(n==1)
+		{
+			printf("0%%\n");
+			continue;
+		}
+		double per=25.0*n;
+		printf("%.0lf%%\n",per);
+	}
+
+	return 0;
+}
+
+
+

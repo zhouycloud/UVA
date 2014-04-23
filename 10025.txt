@@ -1,0 +1,46 @@
+//注意边界条件，k==0的时候
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 3000
+
+char str[MAXN]="";
+
+int calc(int num)
+{
+	int n=2,i;
+	if(num==0)	return 3;
+	while((n*(n+1.0)/2)<num)	n++;
+	if((n*(n+1.0)/2)==num)	
+		return n;
+	while(true)
+	{
+		int sum=n*(n+1)/2;
+		if((sum-num)%2==0)
+			return n;
+		n++;
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,k,j,n,num;
+	while(scanf("%d\n",&n)!=EOF)
+	{
+		for (i=0;i<n;i++)
+		{
+			scanf("%d\n",&num);
+			printf("%d\n",calc(abs(num)));
+			if(i!=n-1)
+				printf("\n");
+		}
+	}
+	
+	return 0;
+}
+
+
+

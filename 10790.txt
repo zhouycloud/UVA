@@ -1,0 +1,27 @@
+//该题目主要涉及到规律地概括，以及long long int 的应用
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 3000
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,j,fir,sec;
+	long long int n=1,a,b;
+	while(scanf("%lld %lld\n",&a,&b)!=EOF)
+	{
+		if(a==b&&b==0)
+			break;
+		long long int sum=0;
+		sum=a*(a-1)*b*(b-1)/4;
+		printf("Case %d: %lld\n",n,sum);
+		n++;
+	}
+
+	return 0;
+}
+
+

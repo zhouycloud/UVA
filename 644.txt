@@ -1,0 +1,66 @@
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 3000
+
+char sentence[MAXN],dic[MAXN][210];
+char str[MAXN];
+
+int str_cmp(const void* str1,const void* str2)
+{
+	char *a=(char*)str1;
+	char *b=(char*)str2;
+	return strcmp(a,b);
+}
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	memset(dic,0,sizeof(dic));
+	memset(str,0,sizeof(str));
+	int count=0,i,j,round=0,k;
+	while(scanf("%s\n",str)!=EOF)
+	{
+		if(strcmp("9",str)!=0)
+		{
+			strcpy(dic[count++],str);
+		}
+		else
+		{
+			qsort(dic,count,210,str_cmp);
+			bool isEncodable=true;
+			for (i=0;i<count;i++)
+			{
+				for (j=i+1;j<count;j++)
+				{
+					bool isPrefix=true;
+					for (k=0;k<strlen(dic[i]);k++)
+					{
+						if(dic[i][k]!=dic[j][k])
+						{
+							isPrefix=false;
+							break;
+						}
+					}
+					if (isPrefix)
+					{
+						isEncodable=false;
+						break;
+					}
+				}
+				if(!isEncodable)
+					break;
+			}
+			if(!isEncodable)
+				printf("Set %d is not immediately decodable\n",++round);
+			else
+				printf("Set %d is immediately decodable\n",++round);
+			memset(dic,0,sizeof(dic));
+			count=0;
+		}
+	}
+	return 0;
+}
+

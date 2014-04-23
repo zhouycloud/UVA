@@ -1,0 +1,196 @@
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 3000
+
+char str[MAXN][100];
+char dic[MAXN][100];
+char output[MAXN][100];
+char keywords[MAXN][100];
+
+int chr_cmp(const void* a,const void* b)
+{
+	char* f=(char *)a;
+	char* s=(char *)b;
+	if(*f>*s)	return 1;
+	if(*f==*s)	return 0;
+	if(*f<*s)	return -1;
+
+}
+
+int str_cmp(const void* a,const void* b)
+{
+	char *first=(char *)a;
+	char *second=(char *)b;
+
+	char strFir[MAXN];
+	char strSec[MAXN];
+	memset(strFir,0,sizeof(strFir));
+	memset(strSec,0,sizeof(strSec));
+
+	int i;
+	for (i=0;i<strlen(first);i++)
+	{
+		strFir[i]=tolower(first[i]);
+	}
+	strFir[i]='\0';
+	for(i=0;i<strlen(second);i++)
+		strSec[i]=tolower(second[i]);
+	strSec[i]='\0';
+	return strcmp(first,second);
+}
+
+struct  Title
+{
+	char words[MAXN][100];
+	int word_num;
+	int keyword_num;
+}title[MAXN];
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,j,n,k,m,h,l,count=0;
+
+	memset(dic,0,sizeof(dic));
+	while(scanf("%s",dic[count++]))
+	{
+		if(strcmp(dic[count-1],"::")==0)
+		{
+			count--;
+			break;
+		}
+	}
+
+	for (i=0;i<MAXN;i++)
+	{
+		memset(title[i].words,0,sizeof(title[i].words));
+		title[i].word_num=0;
+	}
+
+	memset(keywords,0,sizeof(keywords));
+
+	int title_num=0,words_in_title=0;
+	char temp[MAXN]="";
+	int keywords_num=0;
+
+	while(scanf("%s",temp)!=EOF)
+	{
+		strcpy(title[title_num].words[words_in_title],temp);
+		title[title_num].keyword_num=0;
+
+		for (i=0;i<strlen(temp);i++)
+		{
+			temp[i]=tolower(temp[i]);
+		}
+
+		bool isKeyWords=true;
+		for (i=0;i<count;i++)
+		{
+			if(strcmp(temp,dic[i])==0)
+			{
+				isKeyWords=false;
+				break;
+			}
+		}
+		if(isKeyWords)
+		{
+			bool isExist=false;
+			for (i=0;i<keywords_num;i++)
+			{
+				if(strcmp(keywords[i],temp)==0)
+				{
+					isExist=true;
+					break;
+				}
+			}
+			if(!isExist)
+			{
+				strcpy(keywords[keywords_num++],temp);
+				title[title_num].keyword_num++;
+			}
+			
+		}
+		char oper=getchar();
+		if(oper=='\n')
+		{
+			title[title_num].word_num=++words_in_title;
+			title_num++;
+			words_in_title=0;
+		}
+		else if(oper==' ')
+		{
+			words_in_title++;
+		}
+	}
+
+	qsort(keywords,keywords_num,sizeof(char)*100,str_cmp);
+	for(i=0;i<keywords_num;i++)
+	{
+		for (j=0;j<title_num;j++)
+		{
+			bool keyword_in_title=false;
+			int numn=0;
+			for (k=0;k<title[j].word_num;k++)
+			{
+				char temperal[100]="";
+				for(l=0;l<strlen(title[j].words[k]);l++)
+				{
+					temperal[l]=tolower(title[j].words[k][l]);
+				}
+				temperal[l]='\0';
+				if(strcmp(keywords[i],temperal)==0)
+				{
+					keyword_in_title=true;
+					numn++;
+				}
+			}
+			if (keyword_in_title)
+			{
+				for (l=0;l<numn;l++)
+				{
+					int howmany=l;
+					for (k=0;k<title[j].word_num;k++)
+					{
+						char temperal[100]="";
+						for(m=0;m<strlen(title[j].words[k]);m++)
+						{
+							temperal[m]=tolower(title[j].words[k][m]);
+						}
+						temperal[m]='\0';
+
+						if(strcmp(temperal,keywords[i])==0)
+						{
+							if(howmany==0)
+							{
+								for (m=0;m<strlen(temperal);m++)
+								{
+									temperal[m]=toupper(temperal[m]);
+								}
+							}
+							howmany--;
+						}					
+						printf("%s",temperal);
+						
+						if (k==title[j].word_num-1)
+						{
+							printf("\n");
+						}
+						else
+							printf(" ");
+					}
+
+				}
+			}
+
+		}
+	}
+
+
+	return 0;
+}
+
+
+

@@ -1,0 +1,55 @@
+//该题目的精髓在于double类型的相等比较，以及浮点误差
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 3000
+#define eps 1e-9
+
+char str[MAXN]="";
+
+void calc(int height,int num)
+{
+	int i,j,k,n;
+	for (i=1;;i++)
+	{
+		int t=(int)(pow(1.0+pow(num,1.0/i),i)+eps);
+		if (t>=height)
+			break;
+	}
+	k=i;
+	n=(int)(pow(num,1.0/k)+eps);
+
+	int sum_num=0,sum_height=0;
+	if(n==1)
+		sum_num=k;
+	else
+		sum_num=(1-num)/(1-n);
+	sum_height=(n+1)*height-n*num;
+	printf("%d %d\n",sum_num,sum_height);
+
+}
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,k,j,n,num,count=1,height;
+	while(scanf("%d %d\n",&height,&n)!=EOF)
+	{
+		if(n==0&&height==0)
+			break;
+		if(n==1&& height==1)	
+		{
+			printf("0 %d\n",height);
+			continue;
+		}
+		calc(height,n);
+		
+	}
+	
+	return 0;
+}
+
+
+

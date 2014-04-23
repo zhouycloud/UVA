@@ -1,0 +1,198 @@
+//这道题目本来不是一道很难得题目，关键是想清楚，这个可以反复进入一个房间，所以必须要bfs所有状态。
+//题目还有一个小trick，当前所在的房间的灯是不能关的
+//字符串处理的时候，如果是大于等于十的，那么还不能简单的str[i]=i+'0'，因为没有10的ascii码
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <map>
+#include <cmath>
+#include <algorithm>
+#include <queue>
+#define MAXN 1000000
+#define INF 1e9
+#define SWAP(X,Y) X=X+Y;Y=X-Y;X=X-Y
+using namespace std;
+const int MAXHASHSIZE=MAXN+3;
+bool GAM[15][15],light_switches[15][15];
+bool is_find;
+int r,d,s,min_switch,path[15],res_path[15],room_num,state[MAXN][16],next_hash[MAXN],head[MAXHASHSIZE],state_max_index;
+int c_num[MAXN],que_state[MAXN][16],dest[16];
+string oper_que[MAXN],res_str;
+
+int hash_loc(int light[16])
+{
+	int i,v=0;
+	for (i=1;i<=r;i++)
+	{
+		if(light[i])
+			v+=13;
+		else
+			v+=2;
+	}
+	v+=light[15]*11;
+	return v%MAXHASHSIZE;
+}
+
+void trans_to_arr(bool light[15],int pos,int result[16])
+{
+	memset(result,0,sizeof(result));
+	int i;
+	for (i = 0; i < 15; i++)
+	{
+		if (light[i])
+			result[i]=1;
+		else
+			result[i]=0;
+	}
+	result[15]=pos;
+}
+
+bool try_to_insert(int light[16])
+{
+	int h=hash_loc(light);
+	int u=head[h];
+	
+	while (u!=-1)
+	{
+		if(memcmp(light,state[u],sizeof(int)*16)==0)
+			return false;
+		u=next_hash[u];
+	}
+	memcpy(state[state_max_index],light,sizeof(int)*16);
+	next_hash[state_max_index]=head[h];
+	head[h]=state_max_index;
+	state_max_index++;
+
+	return true;
+}
+
+void bfs()
+{
+	int i,j,front,rear,arr[16],arr_tmp[16],count_tmp;
+	string oper_tmp,oper_bak;
+	bool light[15];
+	rear=front=0;
+	memset(light,0,sizeof(light));
+	light[1]=true;
+	trans_to_arr(light,1,arr);
+	memcpy(que_state[rear],arr,sizeof(arr));
+	try_to_insert(arr);
+	c_num[rear]=0;
+	oper_que[rear]="";
+	rear++;
+
+	while (front<rear)
+	{
+		memcpy(arr_tmp,que_state[front],sizeof(arr_tmp));
+		count_tmp=c_num[front];
+		oper_bak=oper_que[front];
+		front++;
+
+		if(count_tmp>min_switch)
+			continue;
+		if(memcmp(arr_tmp,dest,sizeof(arr_tmp))==0)
+		{
+			is_find=true;
+			if(min_switch>count_tmp)
+			{
+				min_switch=count_tmp;
+				res_str=oper_bak;
+			}continue;
+		}
+		for (i=1;i<=r;i++)
+		{
+			if(light_switches[arr_tmp[15]][i]&&i!=arr_tmp[15])
+			{
+				oper_tmp=oper_bak;
+				arr_tmp[i]=1-arr_tmp[i];
+				if(try_to_insert(arr_tmp))
+				{
+					memcpy(que_state[rear],arr_tmp,sizeof(arr_tmp));
+					c_num[rear]=count_tmp+1;
+					if(arr_tmp[i]==1)
+						oper_tmp.append("- Switch on light in room ");
+					else
+						oper_tmp.append("- Switch off light in room ");
+					if(i==10)
+						oper_tmp.append("10");
+					else
+						oper_tmp.append(1,i+'0');
+					oper_tmp.append(".\n");
+					oper_que[rear]=oper_tmp;
+					rear++;
+				}
+				arr_tmp[i]=1-arr_tmp[i];
+			}
+		}
+		for (i=1;i<=r;i++)
+		{
+			if(GAM[arr_tmp[15]][i]&&arr_tmp[i]==1)
+			{
+				oper_tmp=oper_bak;
+				int t=arr_tmp[15];
+				arr_tmp[15]=i;
+				if(try_to_insert(arr_tmp))
+				{
+					memcpy(que_state[rear],arr_tmp,sizeof(arr_tmp));
+					c_num[rear]=count_tmp+1;
+					oper_tmp.append("- Move to room ");
+					if(i==10)
+						oper_tmp.append("10");
+					else
+						oper_tmp.append(1,i+'0');
+					oper_tmp.append(".\n");
+					oper_que[rear]=oper_tmp;
+					rear++;
+				}
+				arr_tmp[15]=t;
+			}
+		}
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,z,t_count=0,fir,sec,blank,count;
+	char tmp[100];
+	bool flag;
+	freopen("input.txt","r",stdin);
+	while (scanf("%d %d %d",&r,&d,&s)!=EOF&&r!=0)
+	{
+		memset(GAM,0,sizeof(GAM));
+		memset(light_switches,0,sizeof(light_switches));
+		memset(state,0,sizeof(state));
+		memset(next_hash,-1,sizeof(next_hash));
+		memset(head,-1,sizeof(head));
+		is_find=false;
+		min_switch=INF;
+		for (i=0;i<d;i++)
+		{
+			scanf("%d %d",&fir,&sec);
+			GAM[fir][sec]=GAM[sec][fir]=true;
+		}
+		for (i=0;i<s;i++)
+		{
+			scanf("%d %d",&fir,&sec);
+			light_switches[fir][sec]=true;
+		}
+		printf("Villa #%d\n",++t_count);
+		path[0]=1;
+		state_max_index=0;
+		memset(dest,0,sizeof(dest));
+		dest[r]=1;
+		dest[15]=r;
+
+
+		bfs();
+
+		if(is_find)
+		{
+			printf("The problem can be solved in %d steps:\n",min_switch);
+			printf("%s\n",res_str.c_str());
+		}
+		else
+			printf("The problem cannot be solved.\n\n");
+	}
+	return 0;
+}

@@ -1,0 +1,131 @@
+//这道暴力破解的题目还是不够熟练，浪费太多时间了
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <cmath>
+#include <algorithm>
+#define MAXN 100
+#define INF 999999
+#define PLUS_CONSTANT 500
+using namespace std;
+int n;
+
+void major_produce(int n,vector<char> char_set,int cur,int indent)
+{
+	int i,j,k,l;
+
+	if(n==cur)
+	{
+		for (l=0;l<indent;l++)
+			printf(" ");
+		printf("writeln(");
+		for (i=0;i<n;i++)
+		{
+			if(i<n-1)
+				printf("%c,",char_set[i]);
+			else
+				printf("%c)\n",char_set[i]);
+		}
+		return;
+	}
+
+	for (i=0;i<n;i++)
+	{
+		char t='a'+i;
+		bool isExist=false;
+		for (j=0;j<cur;j++)
+		{
+			if (t==char_set[j])
+			{
+				isExist=true;
+				break;
+			}
+		}
+		if(isExist)
+			continue;
+
+		for (j=cur;j>=0;j--)
+		{
+			if(j==0)
+			{
+				for (l=0;l<indent;l++)
+					printf(" ");
+				printf("else\n");
+				char_set.push_back(t);
+				for (k=cur;k>0;k--)
+					char_set[k]=char_set[k-1];
+				char_set[0]=t;
+			}
+			else if(j==cur)
+			{
+				for (l=0;l<indent;l++)
+					printf(" ");
+				printf("if %c < %c then\n",char_set[j-1],t);
+				char_set.push_back(t);
+			}
+			else
+			{
+				char_set.push_back(t);
+				for (k=cur;k>j;k--)
+					char_set[k]=char_set[k-1];
+				char_set[j]=t;
+				for (l=0;l<indent;l++)
+					printf(" ");
+				printf("else if %c < %c then\n",char_set[j-1],t);
+			}
+			major_produce(n,char_set,cur+1,indent+2);
+			vector<char>::iterator iter=char_set.begin();
+			for (;iter!=char_set.end();iter++)
+			{
+				if(*iter==t)
+				{
+					char_set.erase(iter);
+					break;
+				}
+			}
+		}
+
+		break;
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,t_count=0;
+	bool flag=false;
+	freopen("input.txt","r",stdin);
+	scanf("%d",&t_count);
+	while (t_count--)
+	{
+		if(!flag)
+			flag=true;
+		else
+			printf("\n");
+		scanf("%d",&n);
+		printf("program sort(input,output);\nvar\n");
+		for (i=0;i<n;i++)
+		{
+			if(i<n-1)
+				printf("%c,",('a'+i));
+			else
+				printf("%c : integer;\n",'a'+i);
+		}
+		printf("begin\n  readln(");
+		for (i=0;i<n;i++)
+		{
+			if(i<n-1)
+				printf("%c,",('a'+i));
+			else
+				printf("%c);\n",'a'+i);
+		}
+		vector<char> char_set;
+		char_set.push_back('a');
+		major_produce(n,char_set,1,2);
+
+		printf("end.\n");
+	}
+
+	return 0;
+}

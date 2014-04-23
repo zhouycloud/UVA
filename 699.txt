@@ -1,0 +1,147 @@
+//标准建树过程，用栈建，习惯了就好。没有什么难度
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <stack>
+#include <vector>
+#include <queue>
+#include <cmath>
+#define MAXN 20005
+using namespace std;
+
+char str1[MAXN],str2[MAXN];
+struct node
+{
+	int left,right;
+	int num;
+	bool isFull;
+	int pos;
+}tree[MAXN];
+
+bool isFull(node **stack_vec,int top)
+{
+	int i;
+	if(top<3)
+		return false;
+	for(i=top-1;i>=top-2;i--)
+	{
+		if(!stack_vec[i]->isFull)
+			return false;
+	}
+	return true;
+}
+
+void buildtree(int count)
+{
+	node* stack_vec[MAXN];
+	int i,top;
+	top=0;
+	for(i=0;i<count;i++)
+	{
+		stack_vec[top++]=tree+i;
+		if(stack_vec[top-1]->num==-1)
+		{
+			while (isFull(stack_vec,top))
+			{
+				node* parent=stack_vec[top-3];
+				parent->right=stack_vec[--top]-tree;
+				parent->left=stack_vec[--top]-tree;
+				parent->isFull=true;
+			}
+		}
+	}
+}
+
+void treedepth(int count)
+{
+	node* queue_array[MAXN];
+	int i,front,rear,min=0,max=0,j;
+	front=rear=0;
+	queue_array[rear++]=tree;
+	while (front<rear)
+	{
+		node* temp=queue_array[front++];
+		if(temp->pos<min)
+			min=temp->pos;
+		if(temp->pos>max)
+			max=temp->pos;
+		if(temp->left!=-1)
+		{
+			tree[temp->left].pos=temp->pos-1;
+			queue_array[rear++]=tree+temp->left;
+		}
+		if(temp->right!=-1)
+		{
+			tree[temp->right].pos=temp->pos+1;
+			queue_array[rear++]=tree+temp->right;
+		}
+	}
+
+	int n_count=0,result[MAXN];
+	for(i=min;i<=max;i++)
+	{
+		int sum=0;
+		for (j=0;j<count;j++)
+		{
+			if(tree[j].num!=-1&&tree[j].pos==i)
+				sum+=tree[j].num;
+		}
+		if(sum==0)
+			continue;
+		result[n_count++]=sum;
+	}
+	for(i=0;i<n_count-1;i++)
+		printf("%d ",result[i]);
+	printf("%d\n\n",result[i]);
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,temp,n,count,t_count=0;
+	freopen("input.txt","r",stdin);
+	memset(str1,0,sizeof(str1));
+	
+	while (fgets(str1,MAXN,stdin))
+	{
+		str1[strlen(str1)-1]='\0';
+		if(strcmp(str1,"-1")==0)
+			break;
+		count=0;
+		char *str=str1;
+		while (sscanf(str,"%d",&tree[count].num)!=EOF)
+		{
+			if(tree[count].num==-1)
+			{
+				tree[count].left=tree[count].right=-1;
+				str=str+3;
+				tree[count].isFull=true;
+				count++;
+				continue;
+			}
+			int temp=tree[count].num/10;
+			str=str+2;
+			while (temp!=0)
+			{
+				temp/=10;
+				str=str+1;
+			}
+			tree[count].left=tree[count].right=-1;
+			if(tree[count].num==-1)
+				tree[count].isFull=true;
+			else
+				tree[count].isFull=false;
+			count++;
+		}
+		buildtree(count);
+		tree[0].pos=0;
+
+		printf("Case %d:\n",++t_count);
+		treedepth(count);
+		memset(tree,0,sizeof(tree));
+		memset(str1,0,sizeof(str1));
+
+	}
+
+	return 0;
+}

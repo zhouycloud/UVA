@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <cmath>
+#define MAXN 1001
+using namespace std;
+int DGAM[MAXN][MAXN],n,m,cnt,stack_arr[MAXN],top;
+bool isVisited[MAXN];
+
+void topo(int start_pos)
+{
+	int i;
+	for (i=1;i<=n;i++)
+	{
+		if(DGAM[start_pos][i]!=0&&!isVisited[i])
+			topo(i);
+	}
+	isVisited[start_pos]=true;
+	stack_arr[--top]=start_pos;
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,start_pos;
+	freopen("input.txt","r",stdin);
+	while (scanf("%d %d",&n,&m)!=EOF)
+	{
+		if(n==0&&m==0)
+			break;
+		memset(DGAM,0,sizeof(DGAM));
+		memset(isVisited,0,sizeof(isVisited));
+		memset(stack_arr,0,sizeof(stack_arr));
+		top=n;
+		for (i=0;i<m;i++)
+		{
+			int fir,sec;
+			scanf("%d %d",&fir,&sec);
+			DGAM[fir][sec]=1;
+		}
+
+		topo(1);
+		for (i=1;i<=n;i++)
+		{
+			if(!isVisited[i])
+				topo(i);
+		}
+		for (i=0;i<n-1;i++)
+			printf("%d ",stack_arr[i]);
+		printf("%d\n",stack_arr[i]);
+	}
+	
+
+	return 0;
+}

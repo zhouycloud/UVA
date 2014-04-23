@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <stack>
+#define MAXN 10000
+using namespace std;
+struct node
+{
+	int count;
+	int member[1003];
+	int last_mem;
+}team[1003];
+
+int seperate_team[1003][MAXN],seperate_team_top[1003],seperate_team_rear[1003],individual[MAXN];
+
+int* t_queue[MAXN];
+
+int num,top,rear,individual_top,individual_rear;
+
+int findteam(int t,int &team_id)
+{
+	int i,j;
+	for(i=0;i<num;i++)
+	{
+		for (j=0;j<team[i].count;j++)
+		{
+			if(team[i].member[j]==t)
+			{
+				team_id=i;
+				return i;
+			}
+		}
+	}
+	return -2;
+}
+
+void doEnqueue(int t)
+{
+	int i,teamid;
+	teamid=findteam(t,teamid);
+	if(teamid==-2)
+	{
+		individual[individual_rear]=t;
+		t_queue[rear]=&individual[individual_rear];
+		rear++;
+		individual_rear++;
+	}
+	else
+	{
+		if(seperate_team_rear[teamid]==seperate_team_top[teamid])
+		{
+			seperate_team[teamid][seperate_team_rear[teamid]]=t;
+			t_queue[rear]=seperate_team[teamid];
+			rear++;
+			seperate_team_rear[teamid]++;
+		}
+		else
+		{
+			seperate_team[teamid][seperate_team_rear[teamid]]=t;
+			seperate_team_rear[teamid]++;
+		}
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	int n,i,j,k,m,temp;
+	freopen("input.txt","r",stdin);
+	int n_count=1;
+	while (true)
+	{
+		scanf("%d\n",&num);
+		if(num==0)
+			break;
+
+		memset(team,0,sizeof(team));
+		memset(t_queue,0,sizeof(t_queue));
+		memset(seperate_team,0,sizeof(seperate_team));
+		memset(seperate_team_top,0,sizeof(seperate_team_top));
+		memset(seperate_team_rear,0,sizeof(seperate_team_rear));
+		memset(individual,0,sizeof(individual));
+		top=rear=individual_top=individual_rear=0;
+
+		for (i=0;i<num;i++)
+		{
+			team[i].last_mem=-1;
+			scanf("%d",&team[i].count);
+			for (j=0;j<team[i].count;j++)
+				scanf("%d",&team[i].member[j]);
+		}
+		char command[200];
+		printf("Scenario #%d\n",n_count++);
+		while (true)
+		{
+			scanf("%s",command);
+			if(strcmp(command,"STOP")==0)	break;
+			else if(strcmp(command,"ENQUEUE")==0)
+			{
+
+				scanf("%d",&temp);
+				doEnqueue(temp);
+			}
+			else if(strcmp(command,"DEQUEUE")==0)
+			{
+				if(top<rear)
+				{
+					int teamid=(t_queue[top]-seperate_team[0])/MAXN;
+					printf("%d\n",seperate_team[teamid][seperate_team_top[teamid]]);
+					seperate_team_top[teamid]++;
+					if(seperate_team_top[teamid]>=seperate_team_rear[teamid])
+						top++;
+				}
+			}
+		}
+		printf("\n");
+	}
+
+	return 0;
+}

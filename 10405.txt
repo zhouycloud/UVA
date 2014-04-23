@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <map>
+#include <cmath>
+#include <algorithm>
+#include <queue>
+#define MAXN 2250000
+#define INF 1e9
+using namespace std;
+const int MAXHASHSIZE=MAXN+3;
+int d[1005][1005];
+string str[2];
+
+int dp(int i,int j)
+{
+	int max_num,fir,sec,third;
+	if(i==-1||j==-1)
+		return 0;
+	if(d[i][j]!=-1)
+		return d[i][j];
+	if(str[0][i]==str[1][j])
+	{
+		max_num=dp(i-1,j-1)+1;
+	}
+	else
+	{
+		fir=dp(i-1,j);
+		sec=dp(i,j-1);
+		if(fir>sec)
+			max_num=fir;
+		else
+			max_num=sec;
+	}
+	d[i][j]=max_num;
+	return max_num;
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,z,t_count=0,t_num;
+	char temp[1005];
+	freopen("input.txt","r",stdin);
+	while(gets(temp))
+	{
+		str[0]=temp;
+		gets(temp);
+		str[1]=temp;
+		memset(d,-1,sizeof(d));
+		int max_num=dp(str[0].length()-1,str[1].length()-1);
+		printf("%d\n",max_num);
+	}
+
+	return 0;
+}

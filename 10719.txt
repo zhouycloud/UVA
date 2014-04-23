@@ -1,0 +1,45 @@
+//此处在UVA上运行的结果，和VS2010上运行的结果不一致
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 20000
+#define MAX_INT 999999999
+int num[MAXN],res[MAXN];
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,j,fir,sec,k;
+	
+	while(scanf("%d",&k)!=EOF)
+	{
+		int n=0;
+		memset(num,0,sizeof(num));
+		memset(res,0,sizeof(res));
+		while(scanf("%d",&num[n])!=EOF)
+		{
+			if(getchar()=='\n')
+				break;
+			n++;
+		}
+		for (i=0;i<n;i++)
+		{
+			res[i]=num[i];
+			num[i+1]+=(res[i]*k);
+		}
+
+		printf("q(x):");
+		for(i=0;i<n;i++)
+		{
+			printf(" %d",res[i]);
+		}
+		printf("\n");
+		printf("r = %d\n\n",num[n]);
+	}
+
+	return 0;
+}
+
+

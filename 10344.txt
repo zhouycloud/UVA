@@ -1,0 +1,90 @@
+//È«ÅÅÁÐ+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <cmath>
+#include <algorithm>
+#define MAXN 100
+#define INF 999999
+#define PLUS_CONSTANT 500
+using namespace std;
+int number[5],permutation[300][5],temp_nums[5],ptr;
+bool flag;
+
+void all_permutation(int cur,int *a)
+{
+	int i,j;
+	if(cur==5)
+	{
+		for (i=0;i<5;i++)
+			permutation[ptr][i]=a[i];
+		ptr++;
+		return;
+	}
+	for (i=0;i<5;i++)
+	{
+		bool ok=true;
+		for (j=0;j<cur;j++)
+		{
+			if(a[j]==i)
+			{
+				ok=false;
+				break;
+			}
+		}
+		if(ok)
+		{
+			a[cur]=i;
+			all_permutation(cur+1,a);
+		}
+	}
+}
+
+void dealwith(int cur,int sum)
+{
+	if(cur==4)
+	{
+		if(sum==23)
+			flag=true;
+		return;
+	}
+	dealwith(cur+1,sum+temp_nums[cur+1]);
+	dealwith(cur+1,sum-temp_nums[cur+1]);
+	dealwith(cur+1,sum*temp_nums[cur+1]);
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,k,t_count=0;
+	freopen("input.txt","r",stdin);
+	int a[5];
+	memset(a,0,sizeof(a));
+	ptr=0;
+	all_permutation(0,a);
+
+	while (scanf("%d %d %d %d %d",number,number+1,number+2,number+3,number+4)!=EOF&&number[0]!=0)
+	{
+		flag=false;
+		for (i=0;i<120;i++)
+		{
+			for (j=0;j<5;j++)
+				temp_nums[j]=number[permutation[i][j]];
+				
+			dealwith(1,temp_nums[0]+temp_nums[1]);
+			dealwith(1,temp_nums[0]-temp_nums[1]);
+			dealwith(1,temp_nums[0]*temp_nums[1]);
+
+			if(flag)
+				break;
+		}
+		
+		if(flag)
+			printf("Possible\n");
+		else
+			printf("Impossible\n");
+	}
+
+	return 0;
+}

@@ -1,0 +1,93 @@
+//注意这道题的输出方式
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <stack>
+#define MAXN 100
+using namespace std;
+
+int dole[100];
+
+void calc(int n,int k, int m)
+{
+	int i,start=1,end=n,count=0,firk,secm;
+	bool isFirst=true;
+
+	while (count<n)
+	{
+		if(isFirst)
+		{
+			firk=k-1;
+			secm=m-1;
+		}
+		else
+		{
+			firk=k;
+			secm=m;
+		}
+		for (i=0;i<firk;i++)
+		{
+			start++;
+			if(start>n)		start=1;
+
+			while (dole[start]==0)
+			{
+				start++;
+				if(start>n)
+					start=1;
+			}
+		}
+		for (i=0;i<secm;i++)
+		{
+			end--;
+			if(end<1)	end=n;
+
+			while (dole[end]==0)
+			{
+				end--;
+				if(end<1)	end=n;
+			}
+		}
+		if(start==end)
+		{
+			dole[start]=0;
+			count++;
+			if(count==n)
+				printf("%3d",start);
+			else
+				printf("%3d,",start);
+		}
+		else
+		{
+			dole[start]=dole[end]=0;
+			count+=2;
+			if(count==n)
+				printf("%3d%3d",start,end);
+			else
+				printf("%3d%3d,",start,end);
+			
+		}
+		isFirst=false;
+
+	}
+	printf("\n");
+}
+
+int main(int argc, char* argv[])
+{
+	int n,i,j,k,m;
+	freopen("input.txt","r",stdin);
+	while (scanf("%d %d %d\n",&n,&k,&m)!=EOF)
+	{
+		if(n==0)
+			break;
+		memset(dole,0,sizeof(dole));
+		for (i=1;i<=n;i++)
+			dole[i]=1;
+
+		calc(n,k,m);
+	}
+	return 0;
+}

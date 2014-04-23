@@ -1,0 +1,29 @@
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 3000
+
+
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int n;
+	double p,k;
+	int i,j;
+
+	while(scanf("%d\n",&n)!=EOF)
+	{
+		scanf("%lf\n",&p);
+		
+		printf("%.0lf\n",pow(p,1.0/n));
+	}
+
+
+	return 0;
+}
+
+
+

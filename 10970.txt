@@ -1,0 +1,27 @@
+//注意理解题目意思
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 20000
+#define MAX_INT 999999999
+
+int num[MAXN],res[MAXN],count,count_res;
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,j,fir,sec,n,k,year,dif,m;
+	
+
+	while(scanf("%d %d\n",&m,&n)!=EOF)
+	{
+		int sum=n-1+n*(m-1);
+		printf("%d\n",sum);
+	}
+
+	return 0;
+}
+
+

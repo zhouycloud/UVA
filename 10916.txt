@@ -1,0 +1,36 @@
+//通过这段代码，可以学习到，log10（）这个函数十分消耗时间，所以要尽量避免
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 20000
+#define MAX_INT 999999999
+
+int num[MAXN],res[MAXN],count,count_res;
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,j,fir,sec,n,k,year,dif;
+	
+
+	while(scanf("%d",&year)!=EOF)
+	{
+		if(year==0)
+			break;
+		double tot=pow(2.0,(int)(year-1960)/10)*4;
+		double max_n=0;
+		int i=0;
+		while(max_n<=tot)
+		{
+			i++;
+			max_n+=log10((double)i)/log10(2.0);
+		}
+		printf("%d\n",i-1);
+	}
+
+	return 0;
+}
+
+

@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <map>
+#include <cmath>
+#include <algorithm>
+#include <queue>
+#define MAXN 730
+#define INF 1e9
+using namespace std;
+const int MAXHASHSIZE=MAXN+3;
+bool nums[MAXN];
+
+int digit_square(int t)
+{
+	int sum=0;
+	while (t>0)
+	{
+		sum=sum+(t%10)*(t%10);
+		t/=10;
+	}
+	return sum;
+}
+
+bool dealwith(int initial_num)
+{
+	int square=0,tmp;
+	int num=initial_num;
+	while (true)
+	{
+		square=digit_square(num);
+		if(square==1)
+		{
+			return true;
+		}
+		num=square;
+		square=0;
+		if(nums[num])
+		{
+			return false;
+		}
+		else
+			nums[num]=true;
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,z,t_count=0,t_num;
+	char tmp[100],chr;
+	bool flag;
+	freopen("input.txt","r",stdin);
+	scanf("%d",&t_count);
+	for (i=1;i<=t_count;i++)
+	{
+		memset(nums,0,sizeof(nums));
+		scanf("%d",&t_num);
+		
+		if(dealwith(t_num))
+			printf("Case #%d: %d is a Happy number.\n",i,t_num);
+		else
+			printf("Case #%d: %d is an Unhappy number.\n",i,t_num);
+	}
+
+	return 0;
+}

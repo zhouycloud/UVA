@@ -1,0 +1,119 @@
+//本来是到很简单的题目，就是自己瞎着急，注意看题目，4个数都不能相等
+//另外可以将n^4的枚举转化为n^2的，这就是用hash的好处
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <map>
+#include <cmath>
+#include <algorithm>
+#include <queue>
+#define MAXN 1000000
+#define INF 1e9
+#define SWAP(X,Y) X=X+Y;Y=X-Y;X=X-Y
+using namespace std;
+const int MAXHASHSIZE=MAXN+3;
+int head[MAXHASHSIZE],next_hash[MAXN],nums[MAXN],max_index,sums[MAXN],c_ount,the_two_num[MAXN][2];
+
+int hash_loc(int num)
+{
+	return (num&0x7fffffff)%MAXHASHSIZE;
+}
+
+bool try_to_insert(int num1,int num2)
+{
+	int num=num1+num2;
+	int h=hash_loc(num);
+	int u=head[h];
+	while (u!=-1)
+	{
+		if(sums[u]==num)
+			return false;
+		u=next_hash[u];
+	}
+	sums[max_index]=num;
+	next_hash[max_index]=head[h];
+	the_two_num[max_index][0]=num1;
+	the_two_num[max_index][1]=num2;
+	head[h]=max_index;
+	max_index++;
+
+	return true;
+}
+
+int cmp(const void* a,const void *b)
+{
+	return *(int*)a-*(int*)b;
+}
+
+bool is_find(int num,int d,int c)
+{
+	int h=hash_loc(num);
+	int u=head[h];
+	while (u!=-1)
+	{
+		if(sums[u]==num)
+		{
+			if(the_two_num[u][0]!=d&&the_two_num[u][1]!=d&&the_two_num[u][0]!=c&&the_two_num[u][1]!=c)
+				return true;
+		}
+		u=next_hash[u];
+	}
+	return false;
+}
+
+int main(int argc, char* argv[])
+{
+	int i,j,z,t_count=0,t_num;
+	char tmp[100],chr;
+	bool flag;
+	freopen("input.txt","r",stdin);
+	while (scanf("%d",&c_ount)!=EOF&&c_ount!=0)
+	{
+		memset(head,-1,sizeof(head));
+		memset(next_hash,-1,sizeof(next_hash));
+		max_index=0;
+
+		for (i=0;i<c_ount;i++)
+		{
+			scanf("%d",&nums[i]);
+		}
+		qsort(nums,c_ount,sizeof(int),cmp);
+		for (i=0;i<c_ount;i++)
+		{
+			for (j=i+1;j<c_ount;j++)
+			{
+				try_to_insert(nums[i],nums[j]);
+			}
+		}
+		bool is_find_result=false;
+		int result=-536870912;
+		for (i=c_ount-1;i>=0;i--)
+		{
+			int d=nums[i];
+			bool flg=false;
+			for (j=0;j<c_ount;j++)
+			{
+				int c=nums[j];
+				int other_two_sum=d-c;
+				if(is_find(other_two_sum,d,c)&&d!=c)
+				{
+					flg=true;
+					break;
+				}
+			}
+			if(flg)
+			{
+				is_find_result=true;
+				if(d>result)
+					result=d;
+			}
+		}
+		if(!is_find_result)
+			printf("no solution\n");
+		else
+			printf("%d\n",result);
+	}
+
+	return 0;
+}

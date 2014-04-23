@@ -1,0 +1,86 @@
+//本道题目让我学到很多东西：
+//1.可以用栈代替递归构造树
+//2.用stl的stack和queue会耗费更多的时间，所以用静态数组来模拟栈以及队列
+//3.栈和队列中尽可能的存储对象的指针，而不是变量，因为读取对象比读取指针//耗费更多的时间，以及存储空间增加
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <stack>
+#define MAXN 10005
+using namespace std;
+
+struct node
+{
+	char name;
+	int left,right;
+	int id;
+}tree[MAXN];
+
+char str[MAXN],result[MAXN];
+node* ans[MAXN];
+
+
+void bfs(char *str,char *result)
+{
+	node* q_node[MAXN];
+	int top,rear;
+	top=rear=0;
+	q_node[rear++]=&tree[strlen(str)-1];
+	int i=0;
+	while (top<rear)
+	{
+		node* n=q_node[top++];
+
+		result[i++]=n->name;
+		if(n->left!=-1)
+			q_node[rear++]=&tree[n->left];
+		if(n->right!=-1)
+			q_node[rear++]=&tree[n->right];
+	}
+}
+
+
+
+int main(int argc, char* argv[])
+{
+	int n,i,j,k,m,num,temp;
+	freopen("input.txt","r",stdin);
+	scanf("%d",&n);
+	while (n--)
+	{
+		if(scanf("%s",str)==EOF)
+			break;
+
+		node n_stack[MAXN];
+		int top=-1;
+		int len=strlen(str);
+		for (j=0;j<len;j++)
+		{
+			tree[j].name=str[j];
+			tree[j].left=tree[j].right=-1;
+			tree[j].id=j;
+
+			if(islower(str[j]))
+				n_stack[++top]=tree[j];
+			else
+			{
+				node fir,sec;
+				sec=n_stack[top--];
+				fir=n_stack[top--];
+				tree[j].left=fir.id;
+				tree[j].right=sec.id;
+				n_stack[++top]=tree[j];
+			}
+		}
+		 
+		bfs(str,result);
+		for (j = strlen(str)-1; j>=0 ; j--)
+			printf("%c",result[j]);
+		printf("\n");
+	}
+
+	return 0;
+}

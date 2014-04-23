@@ -1,0 +1,42 @@
+//该题目的关键是要发现o和ascii的对应关系
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 10000
+
+char sentence[MAXN],cpy_sentence[MAXN][MAXN];
+char sub[MAXN];
+char terminator[MAXN]="___________";
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	fgets(sub,MAXN,stdin);
+	int i,j,k;
+	memset(sub,0,sizeof(sub));
+	memset(sentence,0,sizeof(sentence));
+	j=0;
+	while(fgets(sub,MAXN,stdin))
+	{
+		sub[strlen(sub)-1]='\0';
+		if(strcmp(sub,terminator)==0)
+			break;
+		int ascii=0;
+		int t=128;
+		for (i=2;i<=9;i++)
+		{
+			if(sub[i]!='.')
+				t=t/2;
+			if(sub[i]=='o')
+			{
+				ascii=ascii+t;
+			}
+		}
+		sentence[j++]=ascii;
+		printf("%c",ascii);
+	}
+	return 0;
+}
+

@@ -1,0 +1,27 @@
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define MAXN 3000
+
+int main(int argc, char* argv[])
+{
+	freopen("input.txt","r",stdin);
+	int i,j,fir,sec;
+	long long int n=1,a,b;
+	scanf("%d\n",&n);
+
+		for (i=0;i<n;i++)
+		{
+			scanf("%lld %lld\n",&a,&b);
+			long long int fir=((a-2)%3!=0?(int)(a-2)/3+1:(a-2)/3);
+			long long int sec=((b-2)%3!=0?(int)(b-2)/3+1:(b-2)/3);
+			printf("%lld\n",fir*sec);
+		}
+
+
+	return 0;
+}
+
+
