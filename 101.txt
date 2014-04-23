@@ -1,0 +1,249 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <queue>
+#include <stack>
+#define MAXN 100
+using namespace std;
+
+struct pack
+{
+	vector<int> str;
+	pack *next,*prev;
+};
+
+pack* allocate(int i)
+{
+	pack* res=new pack;
+	res->str.push_back(i);
+	res->next=res->prev=NULL;
+	return res;
+}
+
+pack* findPile(int num,pack* top)
+{
+	int i;
+	while (top!=NULL)
+	{
+		for (i=0;i<top->str.size();i++)
+		{
+			if(top->str[i]==num)
+				return top;
+		}
+		top=top->next;
+	}
+	return top;
+}
+
+void put_initial_pos(int num,pack* top)
+{
+	int i;
+	for(i=0;i<num;i++)
+		top=top->next;
+	top->str.push_back(num);
+}
+
+bool check(pack* containfir,pack* containsec)
+{
+	if(containfir==containsec)
+		return true;
+	return false;
+}
+
+void moveonto(int fir,int sec,pack* top)
+{
+	int i;
+	pack* containfir=findPile(fir,top);
+	pack* containsec=findPile(sec,top);
+
+	if(check(containfir,containsec))
+		return;
+
+	for (i=containfir->str.size()-1;i>=0;i--)
+	{
+		if(containfir->str[i]!=fir)
+		{
+			put_initial_pos(containfir->str[i],top);
+			containfir->str.pop_back();
+		}
+		else
+			break;
+	}
+
+	for (i=containsec->str.size()-1;i>=0;i--)
+	{
+		if(containsec->str[i]!=sec)
+		{
+			put_initial_pos(containsec->str[i],top);
+			containsec->str.pop_back();
+		}
+		else
+			break;
+	}
+
+	containsec->str.push_back(fir);
+	containfir->str.pop_back();
+}
+
+void moveover(int fir,int sec,pack* top)
+{
+	int i;
+	pack* containfir=findPile(fir,top);
+	pack* containsec=findPile(sec,top);
+
+	if(check(containfir,containsec))
+		return;
+
+	for (i=containfir->str.size()-1;i>=0;i--)
+	{
+		if(containfir->str[i]!=fir)
+		{
+			put_initial_pos(containfir->str[i],top);
+			containfir->str.pop_back();
+		}
+		else
+			break;
+	}
+	
+	containsec->str.push_back(fir);
+	containfir->str.pop_back();
+}
+
+void pileonto(int fir,int sec,pack* top)
+{
+	int i,fir_place,max;
+	pack* containfir=findPile(fir,top);
+	pack* containsec=findPile(sec,top);
+
+	if(check(containfir,containsec))
+		return;
+
+	for (i=containsec->str.size()-1;i>=0;i--)
+	{
+		if(containsec->str[i]!=sec)
+		{
+			put_initial_pos(containsec->str[i],top);
+			containsec->str.pop_back();
+		}
+		else
+			break;
+	}
+
+	for (i=0;i<containfir->str.size()-1;i++)
+	{
+		if(containfir->str[i]==fir)
+			break;
+	}
+	fir_place=i;
+	
+	max=containfir->str.size()-1;
+	for (i=fir_place;i<=max;i++)
+	{
+		containsec->str.push_back(containfir->str[i]);
+	}
+	for (i=fir_place;i<=max;i++)
+	{
+		containfir->str.pop_back();
+	}
+
+}
+
+void pileover(int fir,int sec,pack* top)
+{
+	int i,fir_place,sec_place,max;
+	pack* containfir=findPile(fir,top);
+	pack* containsec=findPile(sec,top);
+
+	if(check(containfir,containsec))
+		return;
+
+	for (i=0;i<containfir->str.size()-1;i++)
+	{
+		if(containfir->str[i]==fir)
+			break;
+	}
+	fir_place=i;
+
+	max=containfir->str.size()-1;
+	for (i=fir_place;i<=max;i++)
+	{
+		containsec->str.push_back(containfir->str[i]);
+	}
+	for (i=fir_place;i<=max;i++)
+	{
+		containfir->str.pop_back();
+	}
+}
+
+void cope(char* fir_str,int fir,char* sec_str,int sec,pack* top)
+{
+	if(strcmp(fir_str,"move")==0)
+	{
+		if(strcmp(sec_str,"onto")==0)
+			moveonto(fir,sec,top);
+		if(strcmp(sec_str,"over")==0)
+			moveover(fir,sec,top);
+	}
+	if(strcmp(fir_str,"pile")==0)
+	{
+		if(strcmp(sec_str,"onto")==0)
+			pileonto(fir,sec,top);
+		if(strcmp(sec_str,"over")==0)
+			pileover(fir,sec,top);
+	}
+}
+
+void display(int num,pack* top)
+{
+	int i,j;
+	for (i=0;i<num;i++)
+	{
+		printf("%d:",i);
+		if(top->str.size()==0)
+		{
+			printf("\n");
+			top=top->next;
+			continue;
+		}
+
+		for (j=0;j<top->str.size();j++)
+		{
+			printf(" %d",top->str[j]);
+		}
+		printf("\n");
+		top=top->next;
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	int n,i,j,k;
+	freopen("input.txt","r",stdin);
+	scanf("%d\n",&n);
+	pack *top=allocate(0);
+	pack *former=top;
+	for (i=1;i<=n;i++)
+	{
+		pack* t=allocate(i);
+		former->next=t;
+		t->prev=former;
+		former=former->next;
+	}
+
+	while (true)
+	{
+		int fir,sec;
+		char fir_str[20],sec_str[20];
+		scanf("%s",fir_str);
+		if(strcmp(fir_str,"quit")==0)
+			break;
+
+		scanf("%d %s %d\n",&fir,sec_str,&sec);
+		cope(fir_str,fir,sec_str,sec,top);
+	}
+
+	display(n,top);
+	
+	return 0;
+}
